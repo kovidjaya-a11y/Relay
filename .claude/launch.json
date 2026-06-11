@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "relay-static",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["/tmp/relay_preview/server.py"],
+      "port": 8899
+    }
+  ]
+}

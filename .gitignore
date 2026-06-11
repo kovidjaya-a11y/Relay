@@ -1,0 +1,8 @@
+node_modules/
+.netlify/
+.claude/settings.local.json
+.env
+.env.*
+*.log
+.DS_Store
+current_site.html

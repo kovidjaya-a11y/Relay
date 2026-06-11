@@ -1,0 +1,16 @@
+{
+  "name": "relay-site",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Relay — AI automation for e-commerce brands. Static site + Claude-powered chat assistant.",
+  "scripts": {
+    "dev": "netlify dev",
+    "deploy": "netlify deploy --prod"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0"
+  },
+  "devDependencies": {
+    "netlify-cli": "^17.0.0"
+  }
+}

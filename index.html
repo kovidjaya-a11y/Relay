@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Relay — AI Automation for E-Commerce Brands</title>
+<meta name="description" content="Relay builds AI-powered automation systems for e-commerce brands — abandoned cart recovery, CRM sync, reporting and more. Book a free workflow audit.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/chat.css">
+<style>
+:root {
+  --bg:      #0c0c0a;
+  --bg2:     #141412;
+  --bg3:     #1b1b18;
+  --text:    #f2ece3;
+  --muted:   #78736b;
+  --border:  rgba(242,236,227,0.08);
+  --accent:  #e8582a;
+  --accent-h:#ff7040;
+  --accent-d:rgba(232,88,42,0.10);
+}
+
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:system-ui,-apple-system,'Segoe UI',sans-serif;
+  line-height:1.6;
+  overflow-x:hidden;
+}
+
+/* subtle grain */
+body::after{
+  content:'';
+  position:fixed;inset:0;
+  pointer-events:none;z-index:1000;
+  opacity:.028;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* accent glow behind hero */
+.hero-glow{
+  position:absolute;
+  bottom:-20%;left:-10%;
+  width:700px;height:700px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(232,88,42,0.08) 0%,transparent 70%);
+  pointer-events:none;
+}
+
+/* ── NAV ─────────────────────────────────────────────────── */
+nav{
+  position:fixed;top:0;left:0;right:0;
+  z-index:900;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1.25rem 4rem;
+  border-bottom:1px solid var(--border);
+  background:rgba(12,12,10,.88);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+}
+
+.logo{
+  font-family:'Syne',sans-serif;
+  font-weight:800;font-size:1.2rem;
+  letter-spacing:-.04em;
+  color:var(--text);text-decoration:none;
+}
+.logo .dot{color:var(--accent)}
+
+.nav-links{display:flex;align-items:center;gap:2.5rem}
+.nav-links a{
+  color:var(--muted);text-decoration:none;
+  font-size:.875rem;font-weight:500;
+  transition:color .2s;
+}
+.nav-links a:hover{color:var(--text)}
+
+.btn-primary{
+  display:inline-block;
+  padding:.6rem 1.5rem;
+  background:var(--accent);color:#fff;
+  border-radius:3px;
+  font-family:'Syne',sans-serif;font-weight:700;font-size:.875rem;
+  text-decoration:none;letter-spacing:.01em;
+  transition:all .2s;border:none;cursor:pointer;
+}
+.btn-primary:hover{background:var(--accent-h);transform:translateY(-1px)}
+
+.btn-ghost{
+  display:inline-block;
+  padding:.875rem 2rem;
+  border:1px solid var(--border);color:var(--text);
+  border-radius:3px;
+  font-family:'Syne',sans-serif;font-weight:600;font-size:.9375rem;
+  text-decoration:none;transition:all .2s;cursor:pointer;
+}
+.btn-ghost:hover{border-color:rgba(242,236,227,.35);background:rgba(242,236,227,.04)}
+
+/* ── HERO ────────────────────────────────────────────────── */
+.hero{
+  min-height:100vh;
+  display:flex;flex-direction:column;justify-content:flex-end;
+  padding:0 4rem 6rem;
+  position:relative;overflow:hidden;
+}
+
+.hero-eyebrow{
+  font-family:'DM Mono',monospace;
+  font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:1.5rem;
+  opacity:0;animation:fadeUp .6s ease .2s forwards;
+}
+
+.hero h1{
+  font-family:'Syne',sans-serif;font-weight:800;
+  font-size:clamp(3.5rem,7.5vw,7rem);
+  line-height:.93;letter-spacing:-.05em;
+  max-width:1000px;
+  opacity:0;animation:fadeUp .7s ease .35s forwards;
+}
+
+.hero h1 em{
+  color:var(--accent);font-style:normal;display:block;
+}
+
+.hero-sub{
+  max-width:500px;
+  color:var(--muted);font-size:1.0625rem;line-height:1.65;
+  margin-top:2rem;
+  opacity:0;animation:fadeUp .7s ease .5s forwards;
+}
+
+.hero-actions{
+  display:flex;align-items:center;gap:1.25rem;
+  margin-top:2.5rem;
+  opacity:0;animation:fadeUp .7s ease .65s forwards;
+}
+
+.hero-stats{
+  display:flex;gap:4rem;
+  margin-top:5rem;padding-top:2.5rem;
+  border-top:1px solid var(--border);
+  opacity:0;animation:fadeUp .7s ease .8s forwards;
+}
+
+.stat-val{
+  font-family:'Syne',sans-serif;font-weight:800;
+  font-size:2.625rem;letter-spacing:-.05em;line-height:1;
+  margin-bottom:.35rem;
+}
+.stat-lbl{
+  font-family:'DM Mono',monospace;
+  font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--muted);
+}
+
+/* ── TICKER STRIP ────────────────────────────────────────── */
+.ticker-wrap{
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+  overflow:hidden;
+  padding:.875rem 0;
+  background:var(--bg2);
+}
+.ticker{
+  display:flex;gap:4rem;white-space:nowrap;
+  animation:ticker 28s linear infinite;
+}
+.ticker-item{
+  font-family:'DM Mono',monospace;
+  font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--muted);flex-shrink:0;
+}
+.ticker-item span{color:var(--accent);margin-right:.75rem}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ── SECTION BASE ────────────────────────────────────────── */
+section{padding:7rem 4rem}
+
+.eyebrow{
+  font-family:'DM Mono',monospace;
+  font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:.875rem;
+}
+
+.section-h{
+  font-family:'Syne',sans-serif;font-weight:800;
+  font-size:clamp(2rem,4vw,3.125rem);
+  letter-spacing:-.04em;line-height:1.05;
+  margin-bottom:1rem;
+}
+
+/* ── PROBLEM SECTION ─────────────────────────────────────── */
+.problems{
+  background:var(--bg2);
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+}
+
+.problem-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:2px;margin-top:3.5rem;
+}
+
+.problem-card{
+  background:var(--bg3);
+  padding:2.5rem 2rem;
+  position:relative;overflow:hidden;
+  transition:background .25s;
+}
+.problem-card:hover{background:#202019}
+.problem-card::before{
+  content:'';position:absolute;
+  top:0;left:0;right:0;height:2px;
+  background:var(--accent);
+  transform:scaleX(0);transform-origin:left;
+  transition:transform .35s ease;
+}
+.problem-card:hover::before{transform:scaleX(1)}
+
+.p-num{
+  font-family:'DM Mono',monospace;
+  font-size:.68rem;letter-spacing:.1em;
+  color:var(--muted);margin-bottom:1.5rem;
+}
+.p-title{
+  font-family:'Syne',sans-serif;font-weight:700;
+  font-size:1.0625rem;line-height:1.35;
+  letter-spacing:-.02em;margin-bottom:.75rem;
+}
+.p-desc{font-size:.875rem;color:var(--muted);line-height:1.65}
+
+/* ── SERVICES ────────────────────────────────────────────── */
+.services-head{
+  display:flex;align-items:flex-end;justify-content:space-between;
+  margin-bottom:3.5rem;gap:2rem;
+}
+.services-sub{
+  max-width:380px;text-align:right;
+  color:var(--muted);font-size:.9375rem;line-height:1.6;
+}
+
+.pricing-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:2px;
+}
+
+.pricing-card{
+  background:var(--bg2);
+  padding:2.5rem 2rem;
+  position:relative;
+  display:flex;flex-direction:column;
+  transition:background .25s;
+}
+.pricing-card:hover{background:#18180f}
+
+.pricing-card.featured{
+  background:var(--bg3);
+  outline:1px solid var(--accent);
+  z-index:1;
+}
+
+.badge{
+  font-family:'DM Mono',monospace;
+  font-size:.65rem;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:1.5rem;
+  display:block;min-height:1.2em;
+}
+
+.tier-label{
+  font-family:'DM Mono',monospace;
+  font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:.625rem;
+}
+
+.package-name{
+  font-family:'Syne',sans-serif;font-weight:800;
+  font-size:1.375rem;letter-spacing:-.03em;
+  margin-bottom:.75rem;
+}
+
+.package-price{
+  font-family:'Syne',sans-serif;font-weight:800;
+  font-size:2.75rem;letter-spacing:-.06em;line-height:1;
+  margin-bottom:1rem;
+}
+.package-price .cur{font-size:1.25rem;vertical-align:super;font-weight:600}
+.package-price .per{font-size:.875rem;font-weight:400;font-family:system-ui,sans-serif;color:var(--muted);letter-spacing:0}
+
+.pkg-desc{
+  font-size:.875rem;color:var(--muted);line-height:1.65;
+  padding:1rem 0 1.25rem;
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+  margin-bottom:1.5rem;
+}
+
+.pkg-features{list-style:none;margin-bottom:2rem;flex:1}
+.pkg-features li{
+  display:flex;gap:.75rem;align-items:flex-start;
+  font-size:.875rem;color:var(--muted);
+  padding:.5rem 0;
+  border-bottom:1px solid var(--border);
+}
+.pkg-features li:last-child{border:none}
+.pkg-features li::before{
+  content:'→';
+  color:var(--accent);
+  font-family:'DM Mono',monospace;font-size:.75rem;
+  flex-shrink:0;margin-top:.1rem;
+}
+.pkg-features li span{color:var(--text)}
+
+/* ── HOW IT WORKS ────────────────────────────────────────── */
+.how{
+  background:var(--bg2);
+  border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+}
+
+.steps{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:0;margin-top:4rem;
+  border:1px solid var(--border);
+}
+
+.step{
+  padding:2.5rem 2rem;
+  border-right:1px solid var(--border);
+  position:relative;
+}
+.step:last-child{border-right:none}
+
+.step-num{
+  font-family:'DM Mono',monospace;
+  font-size:.68rem;letter-spacing:.12em;
+  color:var(--accent);margin-bottom:1.5rem;
+}
+.step-title{
+  font-family:'Syne',sans-serif;font-weight:700;
+  font-size:1.125rem;letter-spacing:-.025em;
+  margin-bottom:.75rem;line-height:1.3;
+}
+.step-desc{font-size:.875rem;color:var(--muted);line-height:1.65}
+
+/* ── CTA ─────────────────────────────────────────────────── */
+.cta-section{
+  text-align:center;
+  padding:9rem 4rem 8rem;
+  position:relative;overflow:hidden;
+}
+.cta-glow{
+  position:absolute;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  width:600px;height:600px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(232,88,42,.07) 0%,transparent 70%);
+  pointer-events:none;
+}
+
+.cta-tag{
+  display:inline-block;
+  padding:.375rem 1rem;
+  background:var(--accent-d);
+  border:1px solid rgba(232,88,42,.18);
+  border-radius:2px;
+  font-family:'DM Mono',monospace;
+  font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:2rem;
+}
+
+.cta-h{
+  font-family:'Syne',sans-serif;font-weight:800;
+  font-size:clamp(2.5rem,6vw,5rem);
+  letter-spacing:-.05em;line-height:.95;
+  margin-bottom:1.5rem;
+}
+
+.cta-sub{
+  color:var(--muted);font-size:1rem;
+  max-width:440px;margin:0 auto 2.5rem;
+  line-height:1.65;
+}
+
+.cta-small{
+  margin-top:1.25rem;
+  font-family:'DM Mono',monospace;
+  font-size:.68rem;letter-spacing:.08em;
+  color:var(--muted);
+}
+
+/* ── FOOTER ──────────────────────────────────────────────── */
+footer{
+  padding:1.75rem 4rem;
+  border-top:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.foot-logo{
+  font-family:'Syne',sans-serif;font-weight:800;
+  font-size:.975rem;letter-spacing:-.03em;color:var(--muted);
+}
+.foot-logo .dot{color:var(--accent)}
+.foot-txt{
+  font-family:'DM Mono',monospace;
+  font-size:.68rem;letter-spacing:.06em;color:var(--muted);
+}
+
+/* ── ANIMATIONS ──────────────────────────────────────────── */
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(18px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.reveal{
+  opacity:0;transform:translateY(22px);
+  transition:opacity .7s ease,transform .7s ease;
+}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-d1{transition-delay:.1s}
+.reveal-d2{transition-delay:.2s}
+.reveal-d3{transition-delay:.3s}
+
+/* ── RESPONSIVE ──────────────────────────────────────────── */
+@media(max-width:900px){
+  nav{padding:1.25rem 1.5rem}
+  .nav-links a:not(:last-child){display:none}
+  .hero{padding:0 1.5rem 4rem}
+  .hero-stats{gap:2rem;flex-wrap:wrap;margin-top:3rem}
+  section{padding:4.5rem 1.5rem}
+  .problem-grid,.pricing-grid{grid-template-columns:1fr;gap:2px}
+  .steps{grid-template-columns:1fr}
+  .step{border-right:none;border-bottom:1px solid var(--border)}
+  .step:last-child{border-bottom:none}
+  .services-head{flex-direction:column;align-items:flex-start}
+  .services-sub{text-align:left;max-width:none}
+  footer{flex-direction:column;gap:.875rem;text-align:center}
+  .cta-section{padding:5rem 1.5rem}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="logo">relay<span class="dot">.</span></a>
+  <div class="nav-links">
+    <a href="#services">Services</a>
+    <a href="#how">Process</a>
+    <a href="#book" class="btn-primary">Book a free audit →</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <p class="hero-eyebrow">AI automation · E-commerce brands</p>
+  <h1>
+    Your store<br>
+    <em>runs itself.</em>
+  </h1>
+  <p class="hero-sub">We build AI-powered automation systems that eliminate manual work, recover lost revenue, and connect the tools your brand already uses.</p>
+  <div class="hero-actions">
+    <a href="#book" class="btn-primary" style="font-size:.9375rem;padding:.75rem 1.75rem">Book a free audit →</a>
+    <a href="#services" class="btn-ghost">See packages</a>
+  </div>
+  <div class="hero-stats">
+    <div>
+      <div class="stat-val">40+</div>
+      <div class="stat-lbl">Workflows automated</div>
+    </div>
+    <div>
+      <div class="stat-val">120h</div>
+      <div class="stat-lbl">Avg hours saved / month</div>
+    </div>
+    <div>
+      <div class="stat-val">3×</div>
+      <div class="stat-lbl">Avg ROI within 60 days</div>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker">
+    <span class="ticker-item"><span>→</span> Abandoned cart recovery</span>
+    <span class="ticker-item"><span>→</span> CRM sync automation</span>
+    <span class="ticker-item"><span>→</span> Invoice &amp; payment reminders</span>
+    <span class="ticker-item"><span>→</span> Inventory alerts</span>
+    <span class="ticker-item"><span>→</span> Post-purchase sequences</span>
+    <span class="ticker-item"><span>→</span> Supplier comms</span>
+    <span class="ticker-item"><span>→</span> Reporting dashboards</span>
+    <span class="ticker-item"><span>→</span> Lead follow-up flows</span>
+    <!-- duplicate for infinite scroll -->
+    <span class="ticker-item"><span>→</span> Abandoned cart recovery</span>
+    <span class="ticker-item"><span>→</span> CRM sync automation</span>
+    <span class="ticker-item"><span>→</span> Invoice &amp; payment reminders</span>
+    <span class="ticker-item"><span>→</span> Inventory alerts</span>
+    <span class="ticker-item"><span>→</span> Post-purchase sequences</span>
+    <span class="ticker-item"><span>→</span> Supplier comms</span>
+    <span class="ticker-item"><span>→</span> Reporting dashboards</span>
+    <span class="ticker-item"><span>→</span> Lead follow-up flows</span>
+  </div>
+</div>
+
+<!-- PROBLEMS -->
+<section class="problems">
+  <div class="reveal">
+    <p class="eyebrow">The problem</p>
+    <h2 class="section-h">You're doing work<br>software should do.</h2>
+  </div>
+  <div class="problem-grid">
+    <div class="problem-card reveal reveal-d1">
+      <div class="p-num">01</div>
+      <p class="p-title">Revenue leaking from abandoned carts</p>
+      <p class="p-desc">Up to 70% of carts are abandoned. Without an automated recovery sequence running 24/7, that revenue is gone. Most stores leave tens of thousands on the table every month.</p>
+    </div>
+    <div class="problem-card reveal reveal-d2">
+      <div class="p-num">02</div>
+      <p class="p-title">Your team is buried in repetitive tasks</p>
+      <p class="p-desc">Order confirmations, inventory alerts, customer follow-ups, supplier emails — all done manually, all eating time that could go into growth. You hired people to think, not to copy-paste.</p>
+    </div>
+    <div class="problem-card reveal reveal-d3">
+      <div class="p-num">03</div>
+      <p class="p-title">Your tools don't talk to each other</p>
+      <p class="p-desc">Shopify, Klaviyo, your 3PL, your CRM — data lives in silos. Every manual sync is a chance for error, delay, and margin bleed. The system should run the system.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="services-head reveal">
+    <div>
+      <p class="eyebrow">Services</p>
+      <h2 class="section-h">Three ways<br>to work with us</h2>
+    </div>
+    <p class="services-sub">Every engagement starts with a free workflow audit. We find the highest-leverage automations first — then we build.</p>
+  </div>
+
+  <div class="pricing-grid">
+
+    <!-- Tier 1 -->
+    <div class="pricing-card reveal">
+      <span class="badge">&nbsp;</span>
+      <div class="tier-label">Tier 01</div>
+      <div class="package-name">Starter Build</div>
+      <div class="package-price"><span class="cur">$</span>800 – 1,200</div>
+      <p class="pkg-desc">One high-impact automation, built and deployed. Best for brands ready to fix their single biggest time or revenue leak.</p>
+      <ul class="pkg-features">
+        <li><span>One complete workflow built end-to-end</span></li>
+        <li><span>Abandoned cart or lead follow-up sequence</span></li>
+        <li><span>Invoice / payment reminder automation</span></li>
+        <li><span>Delivered within 7 business days</span></li>
+        <li><span>Loom walkthrough + full documentation</span></li>
+        <li><span>14-day support window included</span></li>
+      </ul>
+      <a href="#book" class="btn-ghost" style="text-align:center">Get started →</a>
+    </div>
+
+    <!-- Tier 2 — featured -->
+    <div class="pricing-card featured reveal reveal-d1">
+      <span class="badge">Most popular</span>
+      <div class="tier-label">Tier 02</div>
+      <div class="package-name">Full Automation Stack</div>
+      <div class="package-price"><span class="cur">$</span>1,500 – 2,500</div>
+      <p class="pkg-desc">A connected system of 2–4 workflows that talk to each other. For brands ready to eliminate an entire category of manual work.</p>
+      <ul class="pkg-features">
+        <li><span>2–4 connected, integrated workflows</span></li>
+        <li><span>CRM sync + customer segmentation</span></li>
+        <li><span>Email &amp; SMS nurture sequences</span></li>
+        <li><span>Inventory alerts + supplier comms</span></li>
+        <li><span>Automated reporting dashboard</span></li>
+        <li><span>30-day support window included</span></li>
+      </ul>
+      <a href="#book" class="btn-primary" style="text-align:center">Book a free audit →</a>
+    </div>
+
+    <!-- Tier 3 -->
+    <div class="pricing-card reveal reveal-d2">
+      <span class="badge">&nbsp;</span>
+      <div class="tier-label">Tier 03</div>
+      <div class="package-name">Monthly Retainer</div>
+      <div class="package-price"><span class="cur">$</span>300 – 500 <span class="per">/ mo</span></div>
+      <p class="pkg-desc">Ongoing automation management and expansion. We keep everything running and add new workflows as your brand scales.</p>
+      <ul class="pkg-features">
+        <li><span>Continuous monitoring of all automations</span></li>
+        <li><span>Tweaks, fixes, and optimisations</span></li>
+        <li><span>One new workflow added each month</span></li>
+        <li><span>Monthly performance report</span></li>
+        <li><span>Priority support response (24-hr)</span></li>
+        <li><span>Scales as your tool stack grows</span></li>
+      </ul>
+      <a href="#book" class="btn-ghost" style="text-align:center">Get started →</a>
+    </div>
+
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how" class="how">
+  <div class="reveal">
+    <p class="eyebrow">Process</p>
+    <h2 class="section-h">Up and running<br>in under two weeks</h2>
+  </div>
+  <div class="steps reveal" style="margin-top:3.5rem">
+    <div class="step">
+      <div class="step-num">01 ——</div>
+      <h3 class="step-title">Free workflow audit</h3>
+      <p class="step-desc">A 30-minute call to map your current tools and processes. We identify which automations will save the most time and recover the most revenue — before you spend a dollar. You keep the audit regardless.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">02 ——</div>
+      <h3 class="step-title">We build it</h3>
+      <p class="step-desc">We design and build your automation using Make.com, Klaviyo, and your existing stack. No code needed on your end. Most builds are delivered in 5–10 business days. We handle the technical setup entirely.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">03 ——</div>
+      <h3 class="step-title">You watch it run</h3>
+      <p class="step-desc">We hand over a full Loom walkthrough, documentation, and a 14–30 day support window. Most clients see measurable results in the first week. From there, we scale.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="book" class="cta-section reveal">
+  <div class="cta-glow"></div>
+  <div class="cta-tag">Free audit &nbsp;·&nbsp; No commitment</div>
+  <h2 class="cta-h">Stop doing<br>what software should.</h2>
+  <p class="cta-sub">Book a 30-minute call. We'll map your biggest automation opportunities and give you a clear picture of what we'd build — and what it would cost.</p>
+  <button type="button" class="btn-primary" style="font-size:1rem;padding:.9375rem 2.5rem" data-open-chat>Book your free audit →</button>
+  <p class="cta-small">No pitch. No obligation. Just a workflow map you can keep.</p>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-logo">relay<span class="dot">.</span></div>
+  <div class="foot-txt">AI automation for e-commerce brands &nbsp;·&nbsp; © 2026</div>
+</footer>
+
+<!-- CHAT WIDGET -->
+<div id="relay-chat">
+  <button id="rc-launcher" aria-label="Chat with Relay's assistant" aria-expanded="false">
+    <svg class="rc-ic-chat" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+    <svg class="rc-ic-close" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+
+  <div id="rc-panel" role="dialog" aria-label="Relay assistant" aria-modal="false">
+    <div id="rc-header">
+      <div class="rc-head-id">
+        <span class="rc-dot"></span>
+        <div>
+          <div class="rc-title">relay<span class="rc-accent">.</span> assistant</div>
+          <div class="rc-status">Usually replies instantly</div>
+        </div>
+      </div>
+      <button id="rc-min" aria-label="Minimize chat">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </button>
+    </div>
+
+    <div id="rc-messages" aria-live="polite"></div>
+
+    <div id="rc-quick"></div>
+
+    <form id="rc-form" autocomplete="off">
+      <input id="rc-input" type="text" placeholder="Ask about pricing, workflows…" aria-label="Type your message" maxlength="1000" />
+      <button id="rc-send" type="submit" aria-label="Send message">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+    </form>
+    <div id="rc-foot">Powered by Relay · AI can make mistakes</div>
+  </div>
+</div>
+
+<script>
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      obs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+</script>
+<script src="assets/chat.js" defer></script>
+</body>
+</html>
