@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "jarvis-assistant"
+version = "0.1.0"
+description = "Personal always-on voice assistant: wake word -> local STT -> Claude -> TTS, with a queryable local memory."
+requires-python = ">=3.10"
+dependencies = [
+    "anthropic>=1.0",
+    "requests>=2.31",
+]
+
+[project.optional-dependencies]
+# Phase 1 voice loop (mic capture + local STT). Portable backend.
+audio = ["sounddevice>=0.4.6", "numpy>=1.26", "webrtcvad-wheels>=2.0.14"]
+stt = ["faster-whisper>=1.0"]
+# Fastest STT on Apple Silicon (Metal). Use instead of `stt` on an M-series Mac.
+stt-mlx = ["mlx-whisper>=0.4"]
+# Offline natural-voice TTS fallback.
+tts-local = ["kokoro-onnx>=0.4", "soundfile>=0.12", "sounddevice>=0.4.6"]
+# Phase 2 wake word.
+wake = ["pvporcupine>=3.0", "pvrecorder>=1.2"]
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+jarvis = "jarvis.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["jarvis*"]
