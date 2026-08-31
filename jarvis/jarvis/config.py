@@ -63,6 +63,9 @@ class AudioConfig:
     # Seconds of trailing silence that ends an utterance.
     silence_after: float = 0.9
     max_utterance: float = 30.0
+    # After Jarvis answers in wake-word mode, keep listening this many
+    # seconds for a follow-up before requiring the wake word again.
+    follow_up_window: float = 6.0
 
 
 @dataclass

@@ -157,11 +157,29 @@ jarvis talk                            # phase 1b: full voice loop
 Try in `chat`: *"I weighed 82.5 kg this morning"* → then
 `jarvis memory facts` in another shell to see it landed.
 
+## Phase 2: always-on wake word
+
+1. Create a free account at [console.picovoice.ai](https://console.picovoice.ai),
+   copy your AccessKey: `export PICOVOICE_ACCESS_KEY=...` (put it in your
+   shell profile — the launchd agent reads it from there).
+2. Train your custom wake phrase (instant), download the macOS `.ppn`, and
+   set `[wake] keyword_path` in `~/.jarvis/config.toml`.
+3. `pip install -e ".[wake]"` then test in the foreground: `jarvis listen`.
+   Run it from a terminal at least once so macOS shows the mic permission
+   prompt.
+4. Make it survive reboots: `jarvis service install` — a launchd login agent
+   that starts Jarvis at login and restarts it if it crashes. Logs land in
+   `~/.jarvis/logs/`. Manage with `jarvis service status` / `uninstall`.
+
+After each answer Jarvis keeps listening for a follow-up for a few seconds
+(`[audio] follow_up_window`, default 6), so you can continue the conversation
+without repeating the wake word.
+
 ## Roadmap
 
 - [x] **Phase 1a** — text CLI: Claude + memory tools + persistent store
 - [x] **Phase 1b** — voice loop: VAD mic capture → whisper → Claude → TTS (code ready; test on the Mac)
-- [ ] **Phase 2** — wake word: train `.ppn` at console.picovoice.ai, `pip install -e ".[wake]"`, `jarvis listen`; run as a `launchd` agent so it survives reboots
+- [x] **Phase 2** — wake word + always-on: `jarvis listen`, follow-up window, `jarvis service install` launchd agent (code ready; needs your `.ppn` + mic to verify)
 - [ ] **Phase 3a** — phone: thin iOS app (Porcupine iOS SDK + AVFoundation mic → your Mac or a small server running this package behind an API)
 - [ ] **Phase 3b** — car: CarPlay is locked down; practical path is the phone app + Bluetooth audio, wake word running on the phone
 - [ ] Later: memory summarization job (compress old journal into profile.md), calendar/home integrations as more tools

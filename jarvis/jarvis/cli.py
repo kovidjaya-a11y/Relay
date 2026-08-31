@@ -91,11 +91,16 @@ def _talk_loop(cfg, assistant, stt, tts, wake=None) -> None:
                 continue
             print("(heard nothing)")
             continue
-        text = stt.transcribe(audio)
-        if not text:
-            continue
-        print(f"you: {text}")
-        _reply(assistant, tts, text)
+        while audio is not None:
+            text = stt.transcribe(audio)
+            if not text:
+                break
+            print(f"you: {text}")
+            _reply(assistant, tts, text)
+            if not wake:
+                break
+            # Follow-up window: stay in the conversation without the wake word.
+            audio = record_utterance(cfg.audio, wait_seconds=cfg.audio.follow_up_window)
 
 
 def cmd_talk(cfg, _args) -> None:
@@ -139,6 +144,17 @@ def cmd_listen(cfg, _args) -> None:
         memory.close()
 
 
+def cmd_service(cfg, args) -> None:
+    from . import service
+
+    if args.service_cmd == "install":
+        service.install(cfg.home)
+    elif args.service_cmd == "uninstall":
+        service.uninstall()
+    elif args.service_cmd == "status":
+        service.status()
+
+
 def cmd_memory(cfg, args) -> None:
     memory = _open_memory(cfg)
     try:
@@ -180,6 +196,12 @@ def main() -> None:
     sub.add_parser("talk", help="voice loop without wake word")
     sub.add_parser("listen", help="always-on wake word voice loop")
 
+    p_svc = sub.add_parser("service", help="run `jarvis listen` as a launchd agent (macOS)")
+    svc_sub = p_svc.add_subparsers(dest="service_cmd", required=True)
+    svc_sub.add_parser("install", help="install and start the login agent")
+    svc_sub.add_parser("uninstall", help="stop and remove the agent")
+    svc_sub.add_parser("status", help="show agent state")
+
     p_mem = sub.add_parser("memory", help="inspect the memory store")
     mem_sub = p_mem.add_subparsers(dest="memory_cmd", required=True)
     mem_sub.add_parser("facts", help="latest value of every metric")
@@ -205,6 +227,7 @@ def main() -> None:
         "ask": cmd_ask,
         "talk": cmd_talk,
         "listen": cmd_listen,
+        "service": cmd_service,
         "memory": cmd_memory,
     }
     try:
