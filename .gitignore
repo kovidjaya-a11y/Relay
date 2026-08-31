@@ -6,3 +6,9 @@ node_modules/
 *.log
 .DS_Store
 current_site.html
+
+# python (jarvis/)
+.venv/
+__pycache__/
+*.egg-info/
+.pytest_cache/
