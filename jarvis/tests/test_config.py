@@ -5,7 +5,7 @@ import os
 
 import pytest
 
-from jarvis.config import load_config, load_env_file
+from jarvis.config import load_config, load_env_file, set_env_var
 
 
 @pytest.fixture
@@ -49,6 +49,50 @@ def test_load_config_reads_the_env_file(jarvis_home):
     (jarvis_home / "env").write_text("ANTHROPIC_API_KEY=sk-ant-via-load-config\n")
     load_config()
     assert os.environ["ANTHROPIC_API_KEY"] == "sk-ant-via-load-config"
+
+
+def test_set_env_var_replaces_in_place_and_keeps_the_rest(jarvis_home):
+    (jarvis_home / "env").write_text(
+        "# a comment\n"
+        "ANTHROPIC_API_KEY=old-key\n"
+        "ELEVENLABS_API_KEY=keep-me\n"
+    )
+    set_env_var("ANTHROPIC_API_KEY", "new-key")
+
+    text = (jarvis_home / "env").read_text()
+    assert "ANTHROPIC_API_KEY=new-key" in text
+    assert "old-key" not in text
+    assert "ELEVENLABS_API_KEY=keep-me" in text
+    assert "# a comment" in text
+
+
+def test_set_env_var_appends_when_absent(jarvis_home):
+    (jarvis_home / "env").write_text("ELEVENLABS_API_KEY=abc\n")
+    set_env_var("ANTHROPIC_API_KEY", "brand-new")
+    text = (jarvis_home / "env").read_text()
+    assert "ELEVENLABS_API_KEY=abc" in text
+    assert "ANTHROPIC_API_KEY=brand-new" in text
+
+
+def test_set_env_var_ignores_commented_out_lines(jarvis_home):
+    """A commented example must not be mistaken for the real setting."""
+    (jarvis_home / "env").write_text("# ANTHROPIC_API_KEY=example\n")
+    set_env_var("ANTHROPIC_API_KEY", "real-key")
+    lines = (jarvis_home / "env").read_text().splitlines()
+    assert "# ANTHROPIC_API_KEY=example" in lines
+    assert "ANTHROPIC_API_KEY=real-key" in lines
+
+
+def test_set_env_var_creates_the_file_private(jarvis_home):
+    path = set_env_var("ANTHROPIC_API_KEY", "k")
+    assert path.exists()
+    assert oct(path.stat().st_mode)[-3:] == "600"
+
+
+def test_a_stored_key_round_trips_into_the_environment(jarvis_home):
+    set_env_var("ANTHROPIC_API_KEY", "sk-ant-round-trip")
+    load_env_file()
+    assert os.environ["ANTHROPIC_API_KEY"] == "sk-ant-round-trip"
 
 
 def test_config_toml_overrides_defaults(jarvis_home):

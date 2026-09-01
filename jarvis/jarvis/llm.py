@@ -13,6 +13,7 @@ Request shape notes (Claude Opus 5):
 from __future__ import annotations
 
 import json
+import os
 import time
 from collections.abc import Iterator
 
@@ -112,6 +113,24 @@ TOOLS = [
 
 _SENTENCE_ENDINGS = (". ", "! ", "? ", ".\n", "!\n", "?\n")
 
+WORKSPACE_HEADER = "anthropic-workspace-id"
+
+
+def make_client(config: Config) -> anthropic.Anthropic:
+    """Build the API client, adding the workspace header when configured.
+
+    Identity-linked API keys are rejected without it; ordinary
+    workspace-scoped keys neither need nor mind it.
+    """
+    workspace_id = config.llm.workspace_id or os.environ.get(
+        "ANTHROPIC_WORKSPACE_ID", ""
+    )
+    if workspace_id:
+        return anthropic.Anthropic(
+            default_headers={WORKSPACE_HEADER: workspace_id.strip()}
+        )
+    return anthropic.Anthropic()
+
 
 def _split_sentences(buffer: str) -> tuple[list[str], str]:
     """Split completed sentences off the front of a streaming text buffer."""
@@ -135,7 +154,7 @@ class Assistant:
     def __init__(self, config: Config, memory: Memory):
         self.config = config
         self.memory = memory
-        self.client = anthropic.Anthropic()
+        self.client = make_client(config)
         self.messages: list[dict] = []
         self.last_turn_at: float | None = None
         # System blocks are snapshotted per user turn so a memory write from
@@ -232,6 +251,34 @@ class Assistant:
             yield from self._ask_claude()
         except anthropic.APIConnectionError:
             yield from self._ask_ollama()
+        except anthropic.BadRequestError as e:
+            raise RuntimeError(self._explain_bad_request(e)) from None
+
+    @staticmethod
+    def _explain_bad_request(e: anthropic.BadRequestError) -> str:
+        """Turn the API's 400s into something actionable at the terminal."""
+        # Prefer the structured body; the stringified form varies by SDK
+        # version and by how the error was constructed.
+        api_message = ""
+        body = getattr(e, "body", None)
+        if isinstance(body, dict) and isinstance(body.get("error"), dict):
+            api_message = str(body["error"].get("message", ""))
+        message = api_message or str(getattr(e, "message", "") or e)
+        if "workspace" in message.lower():
+            return (
+                "Your API key is identity-linked, so every request must name a "
+                "workspace.\nFind the workspace id (starts with 'wrkspc_') at "
+                "https://console.anthropic.com/settings/workspaces, then run:\n"
+                "    jarvis workspace wrkspc_...\n"
+                "Alternatively, create a workspace-scoped API key instead and "
+                "store it with `jarvis key`."
+            )
+        if "credit balance" in message.lower():
+            return (
+                "Your Anthropic account is out of credit. Top it up at "
+                "https://console.anthropic.com/settings/billing"
+            )
+        return f"The API rejected the request: {message}"
 
     def _system_blocks(self) -> list[dict]:
         return [

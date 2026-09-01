@@ -15,7 +15,13 @@ import argparse
 import os
 import sys
 
-from .config import CONFIG_TEMPLATE, ENV_TEMPLATE, PROFILE_TEMPLATE, load_config
+from .config import (
+    CONFIG_TEMPLATE,
+    ENV_TEMPLATE,
+    PROFILE_TEMPLATE,
+    load_config,
+    set_env_var,
+)
 from .memory import JOURNAL_KINDS, Memory
 
 
@@ -42,9 +48,9 @@ def cmd_init(cfg, _args) -> None:
     print(f"initialized {cfg.db_path}")
     print(
         f"\nNext:\n"
-        f"  1. Put your Anthropic API key in {env_path}\n"
+        f"  1. Run: jarvis key      (paste your Anthropic API key)\n"
         f"  2. Describe yourself in {cfg.profile_path}\n"
-        f"  3. Run: jarvis chat"
+        f"  3. Run: jarvis doctor   (checks everything works)"
     )
 
 
@@ -52,10 +58,59 @@ def _require_api_key(cfg) -> None:
     if os.environ.get("ANTHROPIC_API_KEY"):
         return
     raise RuntimeError(
-        f"No Anthropic API key found. Add this line to {cfg.home / 'env'}:\n"
-        f"    ANTHROPIC_API_KEY=sk-ant-...\n"
-        f"Get a key at https://console.anthropic.com/settings/keys"
+        "No Anthropic API key found. Run `jarvis key` to enter one "
+        "(get it from https://console.anthropic.com/settings/keys)."
     )
+
+
+KEY_NAMES = {
+    "anthropic": "ANTHROPIC_API_KEY",
+    "elevenlabs": "ELEVENLABS_API_KEY",
+    "picovoice": "PICOVOICE_ACCESS_KEY",
+}
+
+
+def cmd_key(cfg, args) -> None:
+    """Store an API key without it appearing on screen or in shell history."""
+    import getpass
+
+    name = KEY_NAMES[args.service]
+    prompt = f"Paste your {args.service} key, then press Enter (input is hidden): "
+    try:
+        value = getpass.getpass(prompt).strip()
+    except (EOFError, KeyboardInterrupt):
+        print()
+        raise RuntimeError("cancelled") from None
+
+    if not value:
+        raise RuntimeError("nothing entered — no changes made")
+    if args.service == "anthropic" and not value.startswith("sk-ant-"):
+        print(
+            "warning: Anthropic keys normally start with 'sk-ant-'. Saving it "
+            "anyway — re-run `jarvis key anthropic` if you pasted the wrong thing."
+        )
+
+    path = set_env_var(name, value)
+    print(f"saved {name} to {path}")
+
+
+def cmd_doctor(cfg, _args) -> int:
+    from . import doctor
+
+    return doctor.run(cfg)
+
+
+def cmd_workspace(cfg, args) -> None:
+    """Needed only for identity-linked API keys, which must name a workspace."""
+    workspace_id = args.workspace_id.strip()
+    if not workspace_id.startswith("wrkspc_"):
+        print(
+            "warning: workspace ids normally start with 'wrkspc_'. Saving it "
+            "anyway — find yours at "
+            "https://console.anthropic.com/settings/workspaces"
+        )
+    path = set_env_var("ANTHROPIC_WORKSPACE_ID", workspace_id)
+    print(f"saved ANTHROPIC_WORKSPACE_ID to {path}")
 
 
 def _reply(assistant, tts, text: str) -> None:
@@ -233,6 +288,19 @@ def main() -> None:
     sub = parser.add_subparsers(dest="cmd", required=True)
 
     sub.add_parser("init", help="create ~/.jarvis (config, profile, database)")
+    p_key = sub.add_parser("key", help="store an API key (input stays hidden)")
+    p_key.add_argument(
+        "service",
+        nargs="?",
+        default="anthropic",
+        choices=sorted(KEY_NAMES),
+        help="which key to set (default: anthropic)",
+    )
+    sub.add_parser("doctor", help="check the setup and say what to fix")
+    p_ws = sub.add_parser(
+        "workspace", help="set the workspace id (identity-linked keys need this)"
+    )
+    p_ws.add_argument("workspace_id", help="e.g. wrkspc_01ABC...")
     sub.add_parser("chat", help="text REPL (no audio)")
     p_ask = sub.add_parser("ask", help="one-shot question")
     p_ask.add_argument("text", nargs="+")
@@ -266,6 +334,9 @@ def main() -> None:
 
     handlers = {
         "init": cmd_init,
+        "key": cmd_key,
+        "workspace": cmd_workspace,
+        "doctor": cmd_doctor,
         "chat": cmd_chat,
         "ask": cmd_ask,
         "talk": cmd_talk,
@@ -274,7 +345,9 @@ def main() -> None:
         "memory": cmd_memory,
     }
     try:
-        handlers[args.cmd](cfg, args)
+        code = handlers[args.cmd](cfg, args)
+        if code:
+            sys.exit(code)
     except RuntimeError as e:
         print(f"error: {e}", file=sys.stderr)
         sys.exit(1)
