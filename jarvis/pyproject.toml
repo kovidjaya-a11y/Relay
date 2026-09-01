@@ -20,8 +20,10 @@ stt = ["faster-whisper>=1.0"]
 stt-mlx = ["mlx-whisper>=0.4"]
 # Offline natural-voice TTS fallback.
 tts-local = ["kokoro-onnx>=0.4", "soundfile>=0.12", "sounddevice>=0.4.6"]
-# Phase 2 wake word.
-wake = ["pvporcupine>=3.0", "pvrecorder>=1.2"]
+# Phase 2 wake word (openWakeWord — free, fully local).
+wake = ["openwakeword>=0.6", "sounddevice>=0.4.6", "numpy>=1.26"]
+# Porcupine alternative (requires a paid Picovoice plan since mid-2026).
+wake-porcupine = ["pvporcupine>=3.0", "pvrecorder>=1.2"]
 dev = ["pytest>=8.0"]
 
 [project.scripts]

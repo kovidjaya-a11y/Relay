@@ -12,9 +12,10 @@ Build order (matching the roadmap):
 from __future__ import annotations
 
 import argparse
+import os
 import sys
 
-from .config import CONFIG_TEMPLATE, PROFILE_TEMPLATE, load_config
+from .config import CONFIG_TEMPLATE, ENV_TEMPLATE, PROFILE_TEMPLATE, load_config
 from .memory import JOURNAL_KINDS, Memory
 
 
@@ -28,13 +29,33 @@ def cmd_init(cfg, _args) -> None:
     if not config_path.exists():
         config_path.write_text(CONFIG_TEMPLATE)
         print(f"wrote {config_path}")
+    env_path = cfg.home / "env"
+    if not env_path.exists():
+        env_path.write_text(ENV_TEMPLATE)
+        env_path.chmod(0o600)  # it holds API keys
+        print(f"wrote {env_path}")
     if not cfg.profile_path.exists():
         cfg.profile_path.write_text(PROFILE_TEMPLATE)
         print(f"wrote {cfg.profile_path} — edit this, it's loaded on every call")
     memory = _open_memory(cfg)
     memory.close()
     print(f"initialized {cfg.db_path}")
-    print("\nNext: export ANTHROPIC_API_KEY=... then run `jarvis chat`")
+    print(
+        f"\nNext:\n"
+        f"  1. Put your Anthropic API key in {env_path}\n"
+        f"  2. Describe yourself in {cfg.profile_path}\n"
+        f"  3. Run: jarvis chat"
+    )
+
+
+def _require_api_key(cfg) -> None:
+    if os.environ.get("ANTHROPIC_API_KEY"):
+        return
+    raise RuntimeError(
+        f"No Anthropic API key found. Add this line to {cfg.home / 'env'}:\n"
+        f"    ANTHROPIC_API_KEY=sk-ant-...\n"
+        f"Get a key at https://console.anthropic.com/settings/keys"
+    )
 
 
 def _reply(assistant, tts, text: str) -> None:
@@ -46,6 +67,8 @@ def _reply(assistant, tts, text: str) -> None:
 
 def cmd_chat(cfg, _args) -> None:
     from .llm import Assistant
+
+    _require_api_key(cfg)
 
     memory = _open_memory(cfg)
     assistant = Assistant(cfg, memory)
@@ -66,6 +89,8 @@ def cmd_chat(cfg, _args) -> None:
 def cmd_ask(cfg, args) -> None:
     from .llm import Assistant
 
+    _require_api_key(cfg)
+
     memory = _open_memory(cfg)
     try:
         assistant = Assistant(cfg, memory)
@@ -75,33 +100,54 @@ def cmd_ask(cfg, args) -> None:
         memory.close()
 
 
+def _one_exchange(cfg, assistant, stt, tts, audio, wake) -> None:
+    """Transcribe, answer, then hold the follow-up window open in wake mode."""
+    from .audio import record_utterance
+
+    while audio is not None:
+        text = stt.transcribe(audio)
+        if not text:
+            return
+        print(f"you: {text}")
+        _reply(assistant, tts, text)
+        if not wake:
+            return
+        # Follow-up window: stay in the conversation without the wake word.
+        audio = record_utterance(cfg.audio, wait_seconds=cfg.audio.follow_up_window)
+
+
 def _talk_loop(cfg, assistant, stt, tts, wake=None) -> None:
     from .audio import record_utterance
 
     while True:
-        if wake:
-            print("listening for wake word...")
-            wake.wait_for_wake()
-            tts.speak("Yes?")
-        else:
-            print("listening... (speak now, ctrl-c to quit)")
-        audio = record_utterance(cfg.audio)
-        if audio is None:
+        try:
             if wake:
+                print("listening for wake word...")
+                wake.wait_for_wake()
+                tts.speak("Yes?")
+            else:
+                print("listening... (speak now, ctrl-c to quit)")
+            audio = record_utterance(cfg.audio)
+            if audio is None:
+                if not wake:
+                    print("(heard nothing)")
                 continue
-            print("(heard nothing)")
-            continue
-        text = stt.transcribe(audio)
-        if not text:
-            continue
-        print(f"you: {text}")
-        _reply(assistant, tts, text)
+            _one_exchange(cfg, assistant, stt, tts, audio, wake)
+        except KeyboardInterrupt:
+            raise
+        except Exception as e:
+            # An always-on service must not die on one bad turn: crashing
+            # here costs a launchd restart and a slow speech-model reload.
+            print(f"error handling turn: {type(e).__name__}: {e}", file=sys.stderr)
+            assistant.reset()
 
 
 def cmd_talk(cfg, _args) -> None:
     from .llm import Assistant
     from .stt import make_stt
     from .tts import make_tts
+
+    _require_api_key(cfg)
 
     memory = _open_memory(cfg)
     try:
@@ -120,7 +166,9 @@ def cmd_listen(cfg, _args) -> None:
     from .llm import Assistant
     from .stt import make_stt
     from .tts import make_tts
-    from .wake import WakeWordListener
+    from .wake import make_wake
+
+    _require_api_key(cfg)
 
     memory = _open_memory(cfg)
     wake = None
@@ -129,7 +177,7 @@ def cmd_listen(cfg, _args) -> None:
         print("loading speech model...")
         stt = make_stt(cfg.stt)
         tts = make_tts(cfg.tts)
-        wake = WakeWordListener(cfg.wake)
+        wake = make_wake(cfg.wake)
         _talk_loop(cfg, assistant, stt, tts, wake=wake)
     except KeyboardInterrupt:
         print("\nbye")
@@ -137,6 +185,17 @@ def cmd_listen(cfg, _args) -> None:
         if wake:
             wake.close()
         memory.close()
+
+
+def cmd_service(cfg, args) -> None:
+    from . import service
+
+    if args.service_cmd == "install":
+        service.install(cfg.home)
+    elif args.service_cmd == "uninstall":
+        service.uninstall()
+    elif args.service_cmd == "status":
+        service.status()
 
 
 def cmd_memory(cfg, args) -> None:
@@ -180,6 +239,12 @@ def main() -> None:
     sub.add_parser("talk", help="voice loop without wake word")
     sub.add_parser("listen", help="always-on wake word voice loop")
 
+    p_svc = sub.add_parser("service", help="run `jarvis listen` as a launchd agent (macOS)")
+    svc_sub = p_svc.add_subparsers(dest="service_cmd", required=True)
+    svc_sub.add_parser("install", help="install and start the login agent")
+    svc_sub.add_parser("uninstall", help="stop and remove the agent")
+    svc_sub.add_parser("status", help="show agent state")
+
     p_mem = sub.add_parser("memory", help="inspect the memory store")
     mem_sub = p_mem.add_subparsers(dest="memory_cmd", required=True)
     mem_sub.add_parser("facts", help="latest value of every metric")
@@ -205,6 +270,7 @@ def main() -> None:
         "ask": cmd_ask,
         "talk": cmd_talk,
         "listen": cmd_listen,
+        "service": cmd_service,
         "memory": cmd_memory,
     }
     try:

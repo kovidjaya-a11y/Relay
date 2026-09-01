@@ -17,6 +17,27 @@ def data_dir() -> Path:
     return Path(os.environ.get("JARVIS_HOME", "~/.jarvis")).expanduser()
 
 
+def load_env_file() -> None:
+    """Load ~/.jarvis/env (KEY=value lines) into the environment.
+
+    Keeps API keys in one file you can edit, instead of scattered across
+    shell profiles — and means the launchd agent sees them too. Real
+    environment variables always win, so you can still override per-run.
+    """
+    path = data_dir() / "env"
+    if not path.exists():
+        return
+    for line in path.read_text().splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, _, value = line.partition("=")
+        key = key.strip()
+        value = value.strip().strip('"').strip("'")
+        if key and key not in os.environ:
+            os.environ[key] = value
+
+
 @dataclass
 class LLMConfig:
     model: str = "claude-opus-5"
@@ -28,6 +49,11 @@ class LLMConfig:
     # offline mode). Empty string disables the fallback.
     ollama_model: str = "llama3.1:8b"
     ollama_url: str = "http://localhost:11434"
+    # Always-on hygiene: start a fresh conversation after this much silence,
+    # and never carry more than this many exchanges within one conversation.
+    # Long-term recall comes from the memory store, not the transcript.
+    session_idle_minutes: float = 10.0
+    max_turns: int = 20
 
 
 @dataclass
@@ -51,8 +77,14 @@ class TTSConfig:
 
 @dataclass
 class WakeConfig:
-    # Path to a custom Porcupine keyword file (.ppn) trained at
-    # https://console.picovoice.ai — plus PICOVOICE_ACCESS_KEY in the env.
+    # "openwakeword" (default, free/open) or "porcupine" (requires a paid
+    # Picovoice plan since their free tier ended June 2026).
+    backend: str = "openwakeword"
+    # openWakeWord: a built-in model name ("hey_jarvis", "alexa", ...) or a
+    # path to a custom-trained .onnx model.
+    model: str = "hey_jarvis"
+    threshold: float = 0.5
+    # Porcupine only: custom .ppn path + PICOVOICE_ACCESS_KEY in the env.
     keyword_path: str = ""
     sensitivity: float = 0.6
 
@@ -63,6 +95,9 @@ class AudioConfig:
     # Seconds of trailing silence that ends an utterance.
     silence_after: float = 0.9
     max_utterance: float = 30.0
+    # After Jarvis answers in wake-word mode, keep listening this many
+    # seconds for a follow-up before requiring the wake word again.
+    follow_up_window: float = 6.0
 
 
 @dataclass
@@ -87,6 +122,7 @@ class Config:
 
 
 def load_config() -> Config:
+    load_env_file()
     cfg = Config()
     path = data_dir() / "config.toml"
     if not path.exists():
@@ -121,7 +157,19 @@ model = "small.en"
 backend = "say"           # say | kokoro | elevenlabs
 
 [wake]
-keyword_path = ""         # path to your custom .ppn from console.picovoice.ai
+backend = "openwakeword"  # or "porcupine" (paid Picovoice plan)
+model = "hey_jarvis"      # built-in model name, or path to a custom .onnx
+threshold = 0.5           # raise if you get false wakes, lower if it misses
+"""
+
+ENV_TEMPLATE = """\
+# API keys for Jarvis. This file is read on every run.
+# Keep it private — it is created with owner-only permissions.
+
+ANTHROPIC_API_KEY=
+
+# Optional: only needed if you set [tts] backend = "elevenlabs"
+# ELEVENLABS_API_KEY=
 """
 
 PROFILE_TEMPLATE = """\

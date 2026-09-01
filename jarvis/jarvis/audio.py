@@ -32,10 +32,10 @@ def _make_vad():
         return is_speech
 
 
-def record_utterance(cfg: AudioConfig) -> np.ndarray | None:
+def record_utterance(cfg: AudioConfig, wait_seconds: float = 10.0) -> np.ndarray | None:
     """Block until the user speaks, return audio once they stop.
 
-    Returns None if nothing was said within ~10 seconds.
+    Returns None if nothing was said within wait_seconds.
     """
     import sounddevice as sd
 
@@ -45,7 +45,7 @@ def record_utterance(cfg: AudioConfig) -> np.ndarray | None:
 
     silence_frames_needed = int(cfg.silence_after * 1000 / FRAME_MS)
     max_frames = int(cfg.max_utterance * 1000 / FRAME_MS)
-    wait_frames = int(10_000 / FRAME_MS)
+    wait_frames = int(wait_seconds * 1000 / FRAME_MS)
 
     frames: list[bytes] = []
     started = False

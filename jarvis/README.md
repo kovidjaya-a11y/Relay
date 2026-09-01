@@ -18,22 +18,26 @@ already local).
 
 ## Component decisions
 
-### 1. Wake word — **Porcupine** (openWakeWord as the fully-open alternative)
+### 1. Wake word — **openWakeWord** (Porcupine only if you'll pay for it)
 
-| | Porcupine | openWakeWord |
+> Picovoice discontinued its free tier: free AccessKeys stopped working
+> June 30, 2026, new signups are an approval-gated trial for product teams,
+> and the paid Foundation plan is priced for startups (reported ~$6k/yr).
+> That removes Porcupine as an option for a personal project and flips the
+> original recommendation.
+
+| | openWakeWord | Porcupine |
 |---|---|---|
-| Custom wake word | Type the phrase in [console.picovoice.ai](https://console.picovoice.ai), trained instantly, download `.ppn` | Train your own model from synthetic TTS samples (a real project: hours, quality varies by phrase) |
-| Accuracy / false wakes | Best in class | Good, noticeably more false accepts out of the box |
-| CPU | ~1% of one core | Low, but heavier (ONNX melspectrogram + model per word) |
-| Runs offline | Yes (key check is local after install) | Yes |
-| License / cost | Free personal tier, proprietary | Apache-2.0, fully open |
-| Phone/car later | iOS + Android SDKs — same `.ppn` retrains per platform in one click | No iOS support — a real problem for phase 3 |
+| Cost / access | Apache-2.0, no account, fully local | Paid plan, approval-gated signup |
+| Custom wake word | Pretrained **"hey_jarvis"** ships with the library; other phrases via their training notebook (synthetic TTS data, a few hours of tinkering) | Instant training in their console |
+| Accuracy / false wakes | Good; tune `[wake] threshold` (raise for fewer false wakes) | Best in class |
+| CPU | Low (ONNX, small models) | ~1% of one core |
+| Phone later | No iOS SDK — phase 3 will need its own approach (see roadmap) | First-party iOS/Android SDKs |
 
-**Recommendation: Porcupine.** For a custom phrase you get instant training,
-the lowest false-wake rate, tiny CPU cost, and — decisive for your roadmap —
-first-party iOS/Android SDKs for the phone port. openWakeWord is the fallback
-if you ever want zero proprietary components; the `wake.py` interface is one
-class, so swapping is contained.
+**Recommendation: openWakeWord** with the stock `hey_jarvis` model — it is
+literally the wake word this project wants, pretrained, free, and zero-setup.
+Both backends are implemented in `wake.py`; `[wake] backend = "porcupine"`
+still works if you ever have a paid key.
 
 ### 2. Speech-to-text — **local Whisper** (small.en), pluggable
 
@@ -69,6 +73,12 @@ mis-transcriptions, at ~2x the latency.
 - **Memory tools**: the model can `remember_metric`, `log_journal`,
   `metric_history`, `search_journal` — so "I weighed 82.5 this morning"
   gets recorded without you doing anything.
+- **Session hygiene** (matters once it runs for days): the conversation
+  resets after `[llm] session_idle_minutes` of silence (default 10) and is
+  capped at `[llm] max_turns` exchanges (default 20), trimmed only at whole
+  user turns so tool pairs are never split. Long-term recall is the memory
+  store's job, not the transcript's — so cost and context stay flat no
+  matter how long the service has been up.
 - **Offline fallback**: if the API is unreachable, the same conversation is
   answered by Ollama (`llama3.1:8b` by default) with your memory as read-only
   context. Install [Ollama](https://ollama.com) and `ollama pull llama3.1:8b`.
@@ -143,25 +153,68 @@ or via the CLI: `jarvis memory history weight_kg --since-days 90`.
 
 ## Setup
 
-```bash
-cd jarvis
-python3 -m venv .venv && source .venv/bin/activate
-pip install -e ".[audio,stt,dev]"     # add: stt-mlx, tts-local, wake as you go
+Open **Terminal** on your Mac (press `⌘ Space`, type `Terminal`, hit Enter),
+then paste this one line at a time:
 
-export ANTHROPIC_API_KEY=sk-ant-...
-jarvis init                            # creates ~/.jarvis, edit profile.md
-jarvis chat                            # phase 1a: prove the loop, text only
-jarvis talk                            # phase 1b: full voice loop
+```bash
+git clone https://github.com/kovidjaya-a11y/Relay.git
+cd Relay/jarvis
+./setup.sh --wake
 ```
+
+The script checks your Python version, installs everything into a local
+`.venv`, and creates `~/.jarvis`. It then asks you to fill in two files:
+
+- `~/.jarvis/env` — your Anthropic API key, from
+  [console.anthropic.com](https://console.anthropic.com/settings/keys).
+  Open it with `open -e ~/.jarvis/env`.
+- `~/.jarvis/profile.md` — a few lines about you, loaded into every call.
+  Open it with `open -e ~/.jarvis/profile.md`.
+
+Then start it:
+
+```bash
+cd Relay/jarvis
+source .venv/bin/activate   # needed once per new Terminal window
+jarvis chat                 # type at it — no microphone needed
+jarvis talk                 # talk to it
+jarvis listen               # say "hey jarvis"
+```
+
+Drop `--wake` from `setup.sh` if you only want the text and push-to-talk
+loops for now. Installing manually instead: `pip install -e ".[audio,stt,wake,dev]"`,
+plus `stt-mlx` for faster transcription on Apple Silicon and `tts-local`
+for the offline voice.
 
 Try in `chat`: *"I weighed 82.5 kg this morning"* → then
 `jarvis memory facts` in another shell to see it landed.
+
+## Phase 2: always-on wake word
+
+1. `pip install -e ".[wake]"` — installs openWakeWord. No account, no key;
+   the pretrained models (including `hey_jarvis`, the default) download to
+   a local cache on first run.
+2. Test in the foreground: `jarvis listen`, say "hey jarvis". Run it from a
+   terminal at least once so macOS shows the mic permission prompt. Tune
+   `[wake] threshold` in `~/.jarvis/config.toml` if it false-wakes (raise)
+   or misses you (lower).
+3. Want a different phrase? Train a custom model with the
+   [openWakeWord training notebook](https://github.com/dscripka/openWakeWord#training-new-models)
+   and set `[wake] model = "/path/to/your_phrase.onnx"`.
+4. Make it survive reboots: `jarvis service install` — a launchd login agent
+   that starts Jarvis at login and restarts it if it crashes. Logs land in
+   `~/.jarvis/logs/`. Manage with `jarvis service status` / `uninstall`.
+
+After each answer Jarvis keeps listening for a follow-up for a few seconds
+(`[audio] follow_up_window`, default 6), so you can continue the conversation
+without repeating the wake word.
 
 ## Roadmap
 
 - [x] **Phase 1a** — text CLI: Claude + memory tools + persistent store
 - [x] **Phase 1b** — voice loop: VAD mic capture → whisper → Claude → TTS (code ready; test on the Mac)
-- [ ] **Phase 2** — wake word: train `.ppn` at console.picovoice.ai, `pip install -e ".[wake]"`, `jarvis listen`; run as a `launchd` agent so it survives reboots
-- [ ] **Phase 3a** — phone: thin iOS app (Porcupine iOS SDK + AVFoundation mic → your Mac or a small server running this package behind an API)
+- [x] **Phase 2** — wake word + always-on: `jarvis listen` (openWakeWord `hey_jarvis`), follow-up window, `jarvis service install` launchd agent (code ready; needs a real mic to verify)
+- [ ] **Phase 3a** — phone: thin iOS app (AVFoundation mic → your Mac or a small server running this package behind an API). openWakeWord has no iOS SDK, so start push-to-talk / Action-button; evaluate on-device wake (Core ML port, or Porcupine if paying) later
 - [ ] **Phase 3b** — car: CarPlay is locked down; practical path is the phone app + Bluetooth audio, wake word running on the phone
+- [ ] **Barge-in** — interrupt Jarvis mid-sentence instead of waiting out a wrong answer (needs interruptible TTS playback)
 - [ ] Later: memory summarization job (compress old journal into profile.md), calendar/home integrations as more tools
