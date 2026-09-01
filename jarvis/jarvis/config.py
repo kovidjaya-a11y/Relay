@@ -42,6 +42,9 @@ def load_env_file() -> None:
 class LLMConfig:
     model: str = "claude-opus-5"
     max_tokens: int = 16000
+    # Required only for identity-linked API keys, which must name the
+    # workspace each request acts in. Falls back to ANTHROPIC_WORKSPACE_ID.
+    workspace_id: str = ""
     # Voice replies should be snappy; raise to "high" if you start asking
     # Jarvis for real analysis rather than quick answers.
     effort: str = "low"

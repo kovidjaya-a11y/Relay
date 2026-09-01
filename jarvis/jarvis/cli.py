@@ -94,6 +94,19 @@ def cmd_key(cfg, args) -> None:
     print(f"saved {name} to {path}")
 
 
+def cmd_workspace(cfg, args) -> None:
+    """Needed only for identity-linked API keys, which must name a workspace."""
+    workspace_id = args.workspace_id.strip()
+    if not workspace_id.startswith("wrkspc_"):
+        print(
+            "warning: workspace ids normally start with 'wrkspc_'. Saving it "
+            "anyway — find yours at "
+            "https://console.anthropic.com/settings/workspaces"
+        )
+    path = set_env_var("ANTHROPIC_WORKSPACE_ID", workspace_id)
+    print(f"saved ANTHROPIC_WORKSPACE_ID to {path}")
+
+
 def _reply(assistant, tts, text: str) -> None:
     for sentence in assistant.ask(text):
         print(f"jarvis: {sentence}")
@@ -277,6 +290,10 @@ def main() -> None:
         choices=sorted(KEY_NAMES),
         help="which key to set (default: anthropic)",
     )
+    p_ws = sub.add_parser(
+        "workspace", help="set the workspace id (identity-linked keys need this)"
+    )
+    p_ws.add_argument("workspace_id", help="e.g. wrkspc_01ABC...")
     sub.add_parser("chat", help="text REPL (no audio)")
     p_ask = sub.add_parser("ask", help="one-shot question")
     p_ask.add_argument("text", nargs="+")
@@ -311,6 +328,7 @@ def main() -> None:
     handlers = {
         "init": cmd_init,
         "key": cmd_key,
+        "workspace": cmd_workspace,
         "chat": cmd_chat,
         "ask": cmd_ask,
         "talk": cmd_talk,
