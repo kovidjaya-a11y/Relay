@@ -17,6 +17,27 @@ def data_dir() -> Path:
     return Path(os.environ.get("JARVIS_HOME", "~/.jarvis")).expanduser()
 
 
+def load_env_file() -> None:
+    """Load ~/.jarvis/env (KEY=value lines) into the environment.
+
+    Keeps API keys in one file you can edit, instead of scattered across
+    shell profiles — and means the launchd agent sees them too. Real
+    environment variables always win, so you can still override per-run.
+    """
+    path = data_dir() / "env"
+    if not path.exists():
+        return
+    for line in path.read_text().splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, _, value = line.partition("=")
+        key = key.strip()
+        value = value.strip().strip('"').strip("'")
+        if key and key not in os.environ:
+            os.environ[key] = value
+
+
 @dataclass
 class LLMConfig:
     model: str = "claude-opus-5"
@@ -101,6 +122,7 @@ class Config:
 
 
 def load_config() -> Config:
+    load_env_file()
     cfg = Config()
     path = data_dir() / "config.toml"
     if not path.exists():
@@ -138,6 +160,16 @@ backend = "say"           # say | kokoro | elevenlabs
 backend = "openwakeword"  # or "porcupine" (paid Picovoice plan)
 model = "hey_jarvis"      # built-in model name, or path to a custom .onnx
 threshold = 0.5           # raise if you get false wakes, lower if it misses
+"""
+
+ENV_TEMPLATE = """\
+# API keys for Jarvis. This file is read on every run.
+# Keep it private — it is created with owner-only permissions.
+
+ANTHROPIC_API_KEY=
+
+# Optional: only needed if you set [tts] backend = "elevenlabs"
+# ELEVENLABS_API_KEY=
 """
 
 PROFILE_TEMPLATE = """\

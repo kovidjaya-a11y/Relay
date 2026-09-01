@@ -57,7 +57,9 @@ class ElevenLabsTTS(TTS):
     def __init__(self, cfg: TTSConfig):
         self.api_key = os.environ.get("ELEVENLABS_API_KEY", "")
         if not self.api_key:
-            raise RuntimeError("ELEVENLABS_API_KEY is not set")
+            raise RuntimeError(
+                "ELEVENLABS_API_KEY is not set — add it to ~/.jarvis/env"
+            )
         self.voice_id = cfg.elevenlabs_voice_id
         self.model = cfg.elevenlabs_model
         self.player = shutil.which("afplay") or shutil.which("ffplay") or shutil.which("mpv")

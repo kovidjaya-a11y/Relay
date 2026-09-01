@@ -153,16 +153,38 @@ or via the CLI: `jarvis memory history weight_kg --since-days 90`.
 
 ## Setup
 
-```bash
-cd jarvis
-python3 -m venv .venv && source .venv/bin/activate
-pip install -e ".[audio,stt,dev]"     # add: stt-mlx, tts-local, wake as you go
+Open **Terminal** on your Mac (press `⌘ Space`, type `Terminal`, hit Enter),
+then paste this one line at a time:
 
-export ANTHROPIC_API_KEY=sk-ant-...
-jarvis init                            # creates ~/.jarvis, edit profile.md
-jarvis chat                            # phase 1a: prove the loop, text only
-jarvis talk                            # phase 1b: full voice loop
+```bash
+git clone https://github.com/kovidjaya-a11y/Relay.git
+cd Relay/jarvis
+./setup.sh --wake
 ```
+
+The script checks your Python version, installs everything into a local
+`.venv`, and creates `~/.jarvis`. It then asks you to fill in two files:
+
+- `~/.jarvis/env` — your Anthropic API key, from
+  [console.anthropic.com](https://console.anthropic.com/settings/keys).
+  Open it with `open -e ~/.jarvis/env`.
+- `~/.jarvis/profile.md` — a few lines about you, loaded into every call.
+  Open it with `open -e ~/.jarvis/profile.md`.
+
+Then start it:
+
+```bash
+cd Relay/jarvis
+source .venv/bin/activate   # needed once per new Terminal window
+jarvis chat                 # type at it — no microphone needed
+jarvis talk                 # talk to it
+jarvis listen               # say "hey jarvis"
+```
+
+Drop `--wake` from `setup.sh` if you only want the text and push-to-talk
+loops for now. Installing manually instead: `pip install -e ".[audio,stt,wake,dev]"`,
+plus `stt-mlx` for faster transcription on Apple Silicon and `tts-local`
+for the offline voice.
 
 Try in `chat`: *"I weighed 82.5 kg this morning"* → then
 `jarvis memory facts` in another shell to see it landed.

@@ -4,9 +4,9 @@
 and loads it; the agent starts at login and is restarted if it crashes.
 Logs go to ~/.jarvis/logs/.
 
-The agent runs through a login shell (`zsh -lc`) so ANTHROPIC_API_KEY,
-PICOVOICE_ACCESS_KEY, and ELEVENLABS_API_KEY from your shell profile are
-available — launchd itself does not load your dotfiles.
+API keys come from ~/.jarvis/env, which Jarvis reads itself, so the agent
+does not depend on launchd inheriting your shell environment. It still runs
+through a login shell (`zsh -lc`) so PATH resolves the way it does for you.
 
 Mic permission: run `jarvis listen` once from a terminal first so macOS
 shows the microphone prompt; launchd agents can't present it.

@@ -12,9 +12,10 @@ Build order (matching the roadmap):
 from __future__ import annotations
 
 import argparse
+import os
 import sys
 
-from .config import CONFIG_TEMPLATE, PROFILE_TEMPLATE, load_config
+from .config import CONFIG_TEMPLATE, ENV_TEMPLATE, PROFILE_TEMPLATE, load_config
 from .memory import JOURNAL_KINDS, Memory
 
 
@@ -28,13 +29,33 @@ def cmd_init(cfg, _args) -> None:
     if not config_path.exists():
         config_path.write_text(CONFIG_TEMPLATE)
         print(f"wrote {config_path}")
+    env_path = cfg.home / "env"
+    if not env_path.exists():
+        env_path.write_text(ENV_TEMPLATE)
+        env_path.chmod(0o600)  # it holds API keys
+        print(f"wrote {env_path}")
     if not cfg.profile_path.exists():
         cfg.profile_path.write_text(PROFILE_TEMPLATE)
         print(f"wrote {cfg.profile_path} — edit this, it's loaded on every call")
     memory = _open_memory(cfg)
     memory.close()
     print(f"initialized {cfg.db_path}")
-    print("\nNext: export ANTHROPIC_API_KEY=... then run `jarvis chat`")
+    print(
+        f"\nNext:\n"
+        f"  1. Put your Anthropic API key in {env_path}\n"
+        f"  2. Describe yourself in {cfg.profile_path}\n"
+        f"  3. Run: jarvis chat"
+    )
+
+
+def _require_api_key(cfg) -> None:
+    if os.environ.get("ANTHROPIC_API_KEY"):
+        return
+    raise RuntimeError(
+        f"No Anthropic API key found. Add this line to {cfg.home / 'env'}:\n"
+        f"    ANTHROPIC_API_KEY=sk-ant-...\n"
+        f"Get a key at https://console.anthropic.com/settings/keys"
+    )
 
 
 def _reply(assistant, tts, text: str) -> None:
@@ -46,6 +67,8 @@ def _reply(assistant, tts, text: str) -> None:
 
 def cmd_chat(cfg, _args) -> None:
     from .llm import Assistant
+
+    _require_api_key(cfg)
 
     memory = _open_memory(cfg)
     assistant = Assistant(cfg, memory)
@@ -65,6 +88,8 @@ def cmd_chat(cfg, _args) -> None:
 
 def cmd_ask(cfg, args) -> None:
     from .llm import Assistant
+
+    _require_api_key(cfg)
 
     memory = _open_memory(cfg)
     try:
@@ -122,6 +147,8 @@ def cmd_talk(cfg, _args) -> None:
     from .stt import make_stt
     from .tts import make_tts
 
+    _require_api_key(cfg)
+
     memory = _open_memory(cfg)
     try:
         assistant = Assistant(cfg, memory)
@@ -140,6 +167,8 @@ def cmd_listen(cfg, _args) -> None:
     from .stt import make_stt
     from .tts import make_tts
     from .wake import make_wake
+
+    _require_api_key(cfg)
 
     memory = _open_memory(cfg)
     wake = None

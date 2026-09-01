@@ -89,7 +89,9 @@ class PorcupineListener(WakeWordListener):
 
         access_key = os.environ.get("PICOVOICE_ACCESS_KEY", "")
         if not access_key:
-            raise RuntimeError("PICOVOICE_ACCESS_KEY is not set")
+            raise RuntimeError(
+                "PICOVOICE_ACCESS_KEY is not set — add it to ~/.jarvis/env"
+            )
         if not cfg.keyword_path or not os.path.exists(cfg.keyword_path):
             raise RuntimeError(
                 "No Porcupine keyword model; set [wake] keyword_path to your "
