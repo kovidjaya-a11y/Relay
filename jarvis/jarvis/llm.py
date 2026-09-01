@@ -257,7 +257,13 @@ class Assistant:
     @staticmethod
     def _explain_bad_request(e: anthropic.BadRequestError) -> str:
         """Turn the API's 400s into something actionable at the terminal."""
-        message = str(getattr(e, "message", "") or e)
+        # Prefer the structured body; the stringified form varies by SDK
+        # version and by how the error was constructed.
+        api_message = ""
+        body = getattr(e, "body", None)
+        if isinstance(body, dict) and isinstance(body.get("error"), dict):
+            api_message = str(body["error"].get("message", ""))
+        message = api_message or str(getattr(e, "message", "") or e)
         if "workspace" in message.lower():
             return (
                 "Your API key is identity-linked, so every request must name a "

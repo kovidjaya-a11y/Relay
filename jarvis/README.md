@@ -178,6 +178,7 @@ Then start it:
 ```bash
 cd Relay/jarvis
 source .venv/bin/activate   # needed once per new Terminal window
+jarvis doctor               # checks everything, names the one thing to fix
 jarvis chat                 # type at it — no microphone needed
 jarvis talk                 # talk to it
 jarvis listen               # say "hey jarvis"

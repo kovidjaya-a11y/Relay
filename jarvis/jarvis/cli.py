@@ -50,7 +50,7 @@ def cmd_init(cfg, _args) -> None:
         f"\nNext:\n"
         f"  1. Run: jarvis key      (paste your Anthropic API key)\n"
         f"  2. Describe yourself in {cfg.profile_path}\n"
-        f"  3. Run: jarvis chat"
+        f"  3. Run: jarvis doctor   (checks everything works)"
     )
 
 
@@ -92,6 +92,12 @@ def cmd_key(cfg, args) -> None:
 
     path = set_env_var(name, value)
     print(f"saved {name} to {path}")
+
+
+def cmd_doctor(cfg, _args) -> int:
+    from . import doctor
+
+    return doctor.run(cfg)
 
 
 def cmd_workspace(cfg, args) -> None:
@@ -290,6 +296,7 @@ def main() -> None:
         choices=sorted(KEY_NAMES),
         help="which key to set (default: anthropic)",
     )
+    sub.add_parser("doctor", help="check the setup and say what to fix")
     p_ws = sub.add_parser(
         "workspace", help="set the workspace id (identity-linked keys need this)"
     )
@@ -329,6 +336,7 @@ def main() -> None:
         "init": cmd_init,
         "key": cmd_key,
         "workspace": cmd_workspace,
+        "doctor": cmd_doctor,
         "chat": cmd_chat,
         "ask": cmd_ask,
         "talk": cmd_talk,
@@ -337,7 +345,9 @@ def main() -> None:
         "memory": cmd_memory,
     }
     try:
-        handlers[args.cmd](cfg, args)
+        code = handlers[args.cmd](cfg, args)
+        if code:
+            sys.exit(code)
     except RuntimeError as e:
         print(f"error: {e}", file=sys.stderr)
         sys.exit(1)
