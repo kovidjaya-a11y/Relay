@@ -41,11 +41,27 @@ class OpenWakeWordListener(WakeWordListener):
         # First run downloads the shared feature models (and the pretrained
         # wake models) to the openwakeword cache; no-op afterwards.
         openwakeword.utils.download_models()
+
         # cfg.model is either a built-in name ("hey_jarvis") or a path to a
-        # custom-trained .onnx; the library accepts both forms here.
-        self.model = Model(
-            wakeword_models=[cfg.model], inference_framework="onnx"
-        )
+        # custom-trained .onnx. Validate names ourselves: openWakeWord accepts
+        # a near-miss like "hey jarvis" and silently loads a *different* model
+        # rather than erroring, which would leave a wake word that never fires.
+        is_path = os.path.sep in cfg.model or cfg.model.endswith(".onnx")
+        if not is_path and cfg.model not in openwakeword.MODELS:
+            available = ", ".join(sorted(openwakeword.MODELS))
+            raise RuntimeError(
+                f"Unknown wake word model {cfg.model!r}. Set [wake] model in "
+                f"~/.jarvis/config.toml to one of: {available} — or to the "
+                f"path of a custom-trained .onnx file."
+            )
+        try:
+            self.model = Model(
+                wakeword_models=[cfg.model], inference_framework="onnx"
+            )
+        except Exception as e:
+            raise RuntimeError(
+                f"Could not load wake word model {cfg.model!r}: {e}"
+            ) from e
 
     def wait_for_wake(self) -> None:
         import sounddevice as sd
