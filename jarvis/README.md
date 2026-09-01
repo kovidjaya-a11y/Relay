@@ -73,6 +73,12 @@ mis-transcriptions, at ~2x the latency.
 - **Memory tools**: the model can `remember_metric`, `log_journal`,
   `metric_history`, `search_journal` — so "I weighed 82.5 this morning"
   gets recorded without you doing anything.
+- **Session hygiene** (matters once it runs for days): the conversation
+  resets after `[llm] session_idle_minutes` of silence (default 10) and is
+  capped at `[llm] max_turns` exchanges (default 20), trimmed only at whole
+  user turns so tool pairs are never split. Long-term recall is the memory
+  store's job, not the transcript's — so cost and context stay flat no
+  matter how long the service has been up.
 - **Offline fallback**: if the API is unreachable, the same conversation is
   answered by Ollama (`llama3.1:8b` by default) with your memory as read-only
   context. Install [Ollama](https://ollama.com) and `ollama pull llama3.1:8b`.
@@ -188,4 +194,5 @@ without repeating the wake word.
 - [x] **Phase 2** — wake word + always-on: `jarvis listen` (openWakeWord `hey_jarvis`), follow-up window, `jarvis service install` launchd agent (code ready; needs a real mic to verify)
 - [ ] **Phase 3a** — phone: thin iOS app (AVFoundation mic → your Mac or a small server running this package behind an API). openWakeWord has no iOS SDK, so start push-to-talk / Action-button; evaluate on-device wake (Core ML port, or Porcupine if paying) later
 - [ ] **Phase 3b** — car: CarPlay is locked down; practical path is the phone app + Bluetooth audio, wake word running on the phone
+- [ ] **Barge-in** — interrupt Jarvis mid-sentence instead of waiting out a wrong answer (needs interruptible TTS playback)
 - [ ] Later: memory summarization job (compress old journal into profile.md), calendar/home integrations as more tools

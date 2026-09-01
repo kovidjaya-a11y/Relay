@@ -75,32 +75,46 @@ def cmd_ask(cfg, args) -> None:
         memory.close()
 
 
+def _one_exchange(cfg, assistant, stt, tts, audio, wake) -> None:
+    """Transcribe, answer, then hold the follow-up window open in wake mode."""
+    from .audio import record_utterance
+
+    while audio is not None:
+        text = stt.transcribe(audio)
+        if not text:
+            return
+        print(f"you: {text}")
+        _reply(assistant, tts, text)
+        if not wake:
+            return
+        # Follow-up window: stay in the conversation without the wake word.
+        audio = record_utterance(cfg.audio, wait_seconds=cfg.audio.follow_up_window)
+
+
 def _talk_loop(cfg, assistant, stt, tts, wake=None) -> None:
     from .audio import record_utterance
 
     while True:
-        if wake:
-            print("listening for wake word...")
-            wake.wait_for_wake()
-            tts.speak("Yes?")
-        else:
-            print("listening... (speak now, ctrl-c to quit)")
-        audio = record_utterance(cfg.audio)
-        if audio is None:
+        try:
             if wake:
+                print("listening for wake word...")
+                wake.wait_for_wake()
+                tts.speak("Yes?")
+            else:
+                print("listening... (speak now, ctrl-c to quit)")
+            audio = record_utterance(cfg.audio)
+            if audio is None:
+                if not wake:
+                    print("(heard nothing)")
                 continue
-            print("(heard nothing)")
-            continue
-        while audio is not None:
-            text = stt.transcribe(audio)
-            if not text:
-                break
-            print(f"you: {text}")
-            _reply(assistant, tts, text)
-            if not wake:
-                break
-            # Follow-up window: stay in the conversation without the wake word.
-            audio = record_utterance(cfg.audio, wait_seconds=cfg.audio.follow_up_window)
+            _one_exchange(cfg, assistant, stt, tts, audio, wake)
+        except KeyboardInterrupt:
+            raise
+        except Exception as e:
+            # An always-on service must not die on one bad turn: crashing
+            # here costs a launchd restart and a slow speech-model reload.
+            print(f"error handling turn: {type(e).__name__}: {e}", file=sys.stderr)
+            assistant.reset()
 
 
 def cmd_talk(cfg, _args) -> None:

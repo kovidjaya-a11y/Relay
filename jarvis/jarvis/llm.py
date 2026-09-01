@@ -13,6 +13,7 @@ Request shape notes (Claude Opus 5):
 from __future__ import annotations
 
 import json
+import time
 from collections.abc import Iterator
 
 import anthropic
@@ -136,6 +137,10 @@ class Assistant:
         self.memory = memory
         self.client = anthropic.Anthropic()
         self.messages: list[dict] = []
+        self.last_turn_at: float | None = None
+        # System blocks are snapshotted per user turn so a memory write from
+        # a tool call can't change the cached prefix mid tool-loop.
+        self._turn_system: list[dict] = []
 
     # -- tool execution ------------------------------------------------------
 
@@ -181,9 +186,48 @@ class Assistant:
 
     # -- main entry point ----------------------------------------------------
 
+    def reset(self) -> None:
+        """Start a fresh conversation. Memory persists; the transcript doesn't."""
+        self.messages = []
+
+    def _expire_stale_session(self, now: float) -> None:
+        """A voice assistant left running for days should not carry this
+        morning's conversation into tonight's question."""
+        idle_limit = self.config.llm.session_idle_minutes * 60
+        if (
+            self.last_turn_at is not None
+            and idle_limit > 0
+            and now - self.last_turn_at > idle_limit
+        ):
+            self.reset()
+
+    def _trim_history(self) -> None:
+        """Keep the last max_turns exchanges.
+
+        Cuts only at real user turns (plain-string content), never between a
+        tool_use and its tool_result — splitting that pair is an API error.
+        """
+        max_turns = self.config.llm.max_turns
+        if max_turns <= 0:
+            return
+        boundaries = [
+            i
+            for i, m in enumerate(self.messages)
+            if m["role"] == "user" and isinstance(m["content"], str)
+        ]
+        if len(boundaries) <= max_turns:
+            return
+        self.messages = self.messages[boundaries[-max_turns] :]
+
     def ask(self, user_text: str) -> Iterator[str]:
         """Send one user turn; yield reply sentences as they stream in."""
+        now = time.monotonic()
+        self._expire_stale_session(now)
+        self.last_turn_at = now
+
         self.messages.append({"role": "user", "content": user_text})
+        self._trim_history()
+        self._turn_system = self._system_blocks()
         try:
             yield from self._ask_claude()
         except anthropic.APIConnectionError:
@@ -192,9 +236,11 @@ class Assistant:
     def _system_blocks(self) -> list[dict]:
         return [
             {
+                # Stable prefix: long TTL, since voice use is bursty and the
+                # default 5-minute cache would miss between conversations.
                 "type": "text",
                 "text": PERSONA,
-                "cache_control": {"type": "ephemeral"},
+                "cache_control": {"type": "ephemeral", "ttl": "1h"},
             },
             {
                 "type": "text",
@@ -209,7 +255,7 @@ class Assistant:
             with self.client.beta.messages.stream(
                 model=llm.model,
                 max_tokens=llm.max_tokens,
-                system=self._system_blocks(),
+                system=self._turn_system,
                 messages=self.messages,
                 tools=TOOLS,
                 output_config={"effort": llm.effort},
@@ -255,7 +301,7 @@ class Assistant:
         if not llm.ollama_model:
             yield "I can't reach the network and no offline model is configured."
             return
-        system = PERSONA + "\n\n" + self.memory.context_block()
+        system = "\n\n".join(block["text"] for block in self._turn_system)
         chat_messages = [{"role": "system", "content": system}]
         for m in self.messages:
             if isinstance(m["content"], str):

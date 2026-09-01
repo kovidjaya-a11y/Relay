@@ -28,6 +28,11 @@ class LLMConfig:
     # offline mode). Empty string disables the fallback.
     ollama_model: str = "llama3.1:8b"
     ollama_url: str = "http://localhost:11434"
+    # Always-on hygiene: start a fresh conversation after this much silence,
+    # and never carry more than this many exchanges within one conversation.
+    # Long-term recall comes from the memory store, not the transcript.
+    session_idle_minutes: float = 10.0
+    max_turns: int = 20
 
 
 @dataclass
