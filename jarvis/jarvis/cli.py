@@ -125,7 +125,7 @@ def cmd_listen(cfg, _args) -> None:
     from .llm import Assistant
     from .stt import make_stt
     from .tts import make_tts
-    from .wake import WakeWordListener
+    from .wake import make_wake
 
     memory = _open_memory(cfg)
     wake = None
@@ -134,7 +134,7 @@ def cmd_listen(cfg, _args) -> None:
         print("loading speech model...")
         stt = make_stt(cfg.stt)
         tts = make_tts(cfg.tts)
-        wake = WakeWordListener(cfg.wake)
+        wake = make_wake(cfg.wake)
         _talk_loop(cfg, assistant, stt, tts, wake=wake)
     except KeyboardInterrupt:
         print("\nbye")

@@ -51,8 +51,14 @@ class TTSConfig:
 
 @dataclass
 class WakeConfig:
-    # Path to a custom Porcupine keyword file (.ppn) trained at
-    # https://console.picovoice.ai — plus PICOVOICE_ACCESS_KEY in the env.
+    # "openwakeword" (default, free/open) or "porcupine" (requires a paid
+    # Picovoice plan since their free tier ended June 2026).
+    backend: str = "openwakeword"
+    # openWakeWord: a built-in model name ("hey_jarvis", "alexa", ...) or a
+    # path to a custom-trained .onnx model.
+    model: str = "hey_jarvis"
+    threshold: float = 0.5
+    # Porcupine only: custom .ppn path + PICOVOICE_ACCESS_KEY in the env.
     keyword_path: str = ""
     sensitivity: float = 0.6
 
@@ -124,7 +130,9 @@ model = "small.en"
 backend = "say"           # say | kokoro | elevenlabs
 
 [wake]
-keyword_path = ""         # path to your custom .ppn from console.picovoice.ai
+backend = "openwakeword"  # or "porcupine" (paid Picovoice plan)
+model = "hey_jarvis"      # built-in model name, or path to a custom .onnx
+threshold = 0.5           # raise if you get false wakes, lower if it misses
 """
 
 PROFILE_TEMPLATE = """\
