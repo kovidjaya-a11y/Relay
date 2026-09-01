@@ -162,6 +162,29 @@ model = "hey_jarvis"      # built-in model name, or path to a custom .onnx
 threshold = 0.5           # raise if you get false wakes, lower if it misses
 """
 
+def set_env_var(name: str, value: str) -> Path:
+    """Upsert one KEY=value line in ~/.jarvis/env, leaving the rest alone."""
+    path = data_dir() / "env"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    lines = path.read_text().splitlines() if path.exists() else []
+
+    replaced = False
+    for i, line in enumerate(lines):
+        stripped = line.strip()
+        if stripped.startswith("#") or "=" not in stripped:
+            continue
+        if stripped.partition("=")[0].strip() == name:
+            lines[i] = f"{name}={value}"
+            replaced = True
+            break
+    if not replaced:
+        lines.append(f"{name}={value}")
+
+    path.write_text("\n".join(lines) + "\n")
+    path.chmod(0o600)  # it holds API keys
+    return path
+
+
 ENV_TEMPLATE = """\
 # API keys for Jarvis. This file is read on every run.
 # Keep it private — it is created with owner-only permissions.

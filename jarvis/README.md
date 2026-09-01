@@ -10,9 +10,9 @@ already local).
 
 ```
  mic ──► wake word ──► record until silence ──► STT ──► Claude + tools ──► TTS ──► speaker
-         (Porcupine,     (webrtcvad)             (whisper,   │    ▲          (sentence-
-          always on,                              local)     ▼    │           streamed)
-          ~1% CPU)                                        ~/.jarvis/
+      (openWakeWord,     (webrtcvad)             (whisper,   │    ▲          (sentence-
+       always on,                                 local)     ▼    │           streamed)
+       local, free)                                      ~/.jarvis/
                                                     profile.md + jarvis.db
 ```
 
@@ -165,9 +165,11 @@ cd Relay/jarvis
 The script checks your Python version, installs everything into a local
 `.venv`, and creates `~/.jarvis`. It then asks you to fill in two files:
 
-- `~/.jarvis/env` — your Anthropic API key, from
+- Your Anthropic API key, from
   [console.anthropic.com](https://console.anthropic.com/settings/keys).
-  Open it with `open -e ~/.jarvis/env`.
+  Store it with `jarvis key` — it prompts without echoing, so the key never
+  appears on screen or in your shell history. It lands in `~/.jarvis/env`
+  (owner-only), which you can also edit by hand.
 - `~/.jarvis/profile.md` — a few lines about you, loaded into every call.
   Open it with `open -e ~/.jarvis/profile.md`.
 
