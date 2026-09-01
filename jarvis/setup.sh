@@ -76,6 +76,51 @@ $WANT_WAKE && EXTRAS="$EXTRAS,wake"
 ./.venv/bin/pip install --quiet --upgrade pip
 ./.venv/bin/pip install --quiet -e ".[$EXTRAS]"
 
+say_step "Checking that the audio and speech pieces load"
+CHECK_OUT=$(./.venv/bin/python - <<'PY'
+import importlib
+
+# (module, what it does, how to fix it)
+checks = [
+    ("sounddevice", "microphone access", "brew install portaudio"),
+    ("numpy", "audio maths", ""),
+    ("faster_whisper", "speech to text", ""),
+]
+try:
+    import openwakeword  # noqa: F401
+    checks.append(("openwakeword", "wake word", ""))
+except ImportError:
+    pass
+
+for name, purpose, fix in checks:
+    try:
+        importlib.import_module(name)
+    except Exception as e:
+        print(f"FAIL\t{name}\t{purpose}\t{fix}\t{e}")
+print("DONE")
+PY
+) || true
+
+if ! grep -q '^DONE$' <<<"$CHECK_OUT"; then
+    fail "The install did not complete. Output:
+$CHECK_OUT"
+fi
+VOICE_BROKEN=false
+if grep -q '^FAIL' <<<"$CHECK_OUT"; then
+    VOICE_BROKEN=true
+    # Not fatal: `jarvis chat` needs no microphone, so let setup finish and
+    # flag this as something to fix before `jarvis talk`.
+    printf "\n\033[33mHeads up — the voice pieces aren't ready yet:\033[0m\n"
+    while IFS=$'\t' read -r _ name purpose fix err; do
+        [[ "$name" ]] || continue
+        printf "  • %s (%s): %s\n" "$name" "$purpose" "$err"
+        [[ "$fix" ]] && printf "    Fix with: %s   then re-run ./setup.sh%s\n" "$fix" "$WAKE_FLAG"
+    done < <(grep '^FAIL' <<<"$CHECK_OUT")
+    printf "\nTyping to Jarvis ('jarvis chat') works regardless — carrying on.\n"
+else
+    echo "all good"
+fi
+
 say_step "Setting up ~/.jarvis"
 ./.venv/bin/jarvis init
 
@@ -98,9 +143,17 @@ $(printf "\033[1m==> Then start it:\033[0m")
      cd $(pwd)
      source .venv/bin/activate
      jarvis chat     # type at it first, no microphone needed
-     jarvis talk     # then talk to it
 EOF
-$WANT_WAKE && cat <<'EOF'
-     jarvis listen   # then just say "hey jarvis"
+if $VOICE_BROKEN; then
+    cat <<EOF
+
+  (Voice is not usable until you fix the item flagged above and re-run
+   ./setup.sh$WAKE_FLAG — typing works now either way.)
 EOF
+else
+    echo "     jarvis talk     # then talk to it"
+    if $WANT_WAKE; then
+        echo '     jarvis listen   # then just say "hey jarvis"'
+    fi
+fi
 echo
