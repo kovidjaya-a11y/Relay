@@ -1,0 +1,22 @@
+# Kerb Automation site. Static only, no build step.
+# Netlify: set "Base directory" to kerb (or drag this folder into Netlify Drop).
+[build]
+  publish = "."
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+# The personalised pitch page and thank-you page shouldn't appear in search.
+[[headers]]
+  for = "/pitch.html"
+  [headers.values]
+    X-Robots-Tag = "noindex"
+
+[[headers]]
+  for = "/thanks.html"
+  [headers.values]
+    X-Robots-Tag = "noindex"
