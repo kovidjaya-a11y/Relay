@@ -2,10 +2,10 @@
 
 ```
 kerb/                         ← the website. Deploy THIS folder to Netlify.
-  index.html                  Home page with the "What's your database worth?" calculator
+  index.html                  Home page: calculator in the hero, Calendly popup + inline booking calendar
   pitch.html                  Personalised one-page pitch (?agency=&name=&contacts=&commission=), prints to A4
   privacy.html, terms.html    DRAFTS, to be reviewed by a lawyer
-  thanks.html, 404.html
+  404.html
   assets/site.css
   assets/calculator.js        Calculator: 0.8% book rate, 1 in 5 list, $400 per appraisal
   netlify.toml, robots.txt
@@ -26,10 +26,11 @@ still holds the older Relay site, which setting the base directory ignores.)
 
 Then:
 
-1. **Forms:** Site configuration → Forms → *Enable form detection*, then
-   redeploy. The pilot application form (`name="pilot"`) shows up under Forms.
-   Add a form notification to email you at hello@kerbautomation.com. Each
-   submission includes the visitor's calculator numbers.
+1. **Bookings:** every "Book a call" button opens
+   https://calendly.com/kerbautomation/30min as a popup, and the same calendar
+   is embedded at the bottom of the home page. There's no form to set up.
+   Calendly emails you each booking. To change the link, search the `kerb/`
+   folder for `calendly.com/kerbautomation/30min`.
 2. **Domain:** Domain management → add `kerbautomation.com` and point the DNS
    at Netlify. HTTPS is automatic.
 
@@ -48,8 +49,8 @@ Find them with `grep -rn "\[ADD ABN\]\|\[STATE\]" kerb/`
   the "you only pay for real appointments" promise without relying on the
   agency's word forever. Change it in `index.html` (Pricing → No-shows) and
   `terms.html` §3.
-- **Example conversation:** "Harbour & Co" is labelled *Illustrative example*.
-  Replace it with a real (permissioned) conversation after the pilots.
+- **No example conversation or testimonials yet:** the fictional "Harbour & Co"
+  chat was removed. Add a real (permissioned) result and testimonial after the pilots.
 - **Pilot pricing:** the site advertises $0 setup + $400 per booked appraisal.
   The 6-month plan also mentions "half-price pilots". Pick one before you pitch,
   and don't advertise both.

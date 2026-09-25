@@ -3,16 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kerb Automation | Database reactivation for real estate agencies</title>
-<meta name="description" content="We turn your agency's old appraisals, past buyers and past vendors into booked appraisals using compliant SMS and email. $0 setup. You pay $400 per booked appraisal.">
-<meta property="og:title" content="Your old appraisals are your next listings">
-<meta property="og:description" content="Database reactivation for Australian real estate agencies. $0 setup, $400 per booked appraisal.">
+<title>Kerb Automation | More appraisals from your existing database</title>
+<meta name="description" content="We contact your agency's past appraisals, buyers and vendors by SMS and email, handle the replies and book appraisals into your diary. $400 per booked appraisal, no setup fee.">
+<meta property="og:title" content="Kerb Automation | More appraisals from your existing database">
+<meta property="og:description" content="Database reactivation for Australian real estate agencies. $400 per booked appraisal, no setup fee.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://kerbautomation.com/">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2314161a'/%3E%3Cpath d='M9 7v18M9 17l9-10M12.5 13.5L21 25' stroke='%23f06a2b' stroke-width='3.2' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%231f6feb'/%3E%3Ctext x='16' y='23' font-family='Arial' font-weight='700' font-size='19' fill='white' text-anchor='middle'%3EK%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://assets.calendly.com/assets/external/widget.css">
 <link rel="stylesheet" href="assets/site.css">
 </head>
 <body>
@@ -27,275 +28,187 @@
     </a>
     <nav class="nav-links" aria-label="Main">
       <a href="#how">How it works</a>
-      <a href="#calculator">Calculator</a>
       <a href="#pricing">Pricing</a>
       <a href="#faq">FAQ</a>
+      <a href="#book">Contact</a>
     </nav>
-    <a href="#apply" class="btn btn-sm">Apply for a pilot</a>
+    <a href="https://calendly.com/kerbautomation/30min" class="btn btn-sm js-calendly" target="_blank" rel="noopener">Book a call</a>
   </div>
 </header>
 
 <main id="main">
 
-<!-- HERO -->
 <section class="hero">
   <div class="wrap hero-grid">
     <div>
-      <p class="eyebrow">Database reactivation for real estate agencies</p>
-      <h1>Your old appraisals are your <span class="hl">next listings.</span></h1>
-      <p class="lede">We text and email your past appraisals, buyers and vendors in your agency's name, handle every reply, and book appraisals straight into your diary. You pay only when an appraisal is booked.</p>
+      <h1>More appraisals from the database you already have.</h1>
+      <p class="lede">We contact your past appraisals, buyers and vendors by SMS and email in your agency's name, look after the replies, and book appraisals into your agents' diaries. You pay $400 for each booked appraisal. There's no setup fee.</p>
       <div class="hero-cta">
-        <a href="#calculator" class="btn">What's my database worth?</a>
-        <a href="#apply" class="btn btn-ghost">Apply for a founding pilot</a>
+        <a href="https://calendly.com/kerbautomation/30min" class="btn js-calendly" target="_blank" rel="noopener">Book a 30-minute call</a>
+        <a href="#how" class="btn btn-ghost">How it works</a>
       </div>
-      <ul class="facts" aria-label="Key terms">
-        <li><strong>$0</strong><span>setup</span></li>
-        <li><strong>$400</strong><span>per booked appraisal</span></li>
-        <li><strong>~10</strong><span>days per campaign</span></li>
-        <li><strong>$0</strong><span>if nothing books</span></li>
+      <ul class="hero-points">
+        <li>No setup fee</li>
+        <li>Nothing to pay if nothing books</li>
+        <li>You approve every message</li>
       </ul>
     </div>
 
-    <figure class="phone" aria-label="Example SMS conversation">
-      <div class="phone-top">
-        <span class="phone-name">Harbour &amp; Co Real Estate</span>
-        <span class="phone-tag">Illustrative example</span>
-      </div>
-      <div class="thread">
-        <p class="msg out">Hi Mark, it's Sarah from Harbour &amp; Co. We did an appraisal on 14 Wattle St back in 2022. Prices on your street have moved a fair bit since. Want an updated figure, no strings? Reply STOP to opt out.</p>
-        <p class="msg in">Actually yes. We've been talking about downsizing next year.</p>
-        <p class="msg out">Great timing then. Sarah can pop by Thursday at 4:30pm or Saturday at 10am. Which suits?</p>
-        <p class="msg in">Saturday works</p>
-        <p class="msg out">Done. Sarah will see you Saturday 10am at 14 Wattle St. You'll get a reminder the day before.</p>
-        <p class="booked">✓ Appraisal booked into Sarah's diary</p>
-      </div>
-    </figure>
-  </div>
-</section>
-
-<!-- PROBLEM -->
-<section class="band">
-  <div class="wrap two-col">
-    <div>
-      <p class="eyebrow">The problem</p>
-      <h2>Thousands of warm contacts, sitting in your CRM.</h2>
-    </div>
-    <div class="prose">
-      <p>Every agency has them. Owners who got an appraisal and didn't list. Buyers who bought five years ago and are now outgrowing the house. Vendors who sold, bought again and are ready to move.</p>
-      <p>They already know your name. Nobody follows them up because your agents are busy chasing today's listings. So those contacts go cold, then list with whoever knocks first.</p>
-      <p><strong>We follow them up for you, at scale, and you only pay when one turns into an appraisal in your diary.</strong></p>
-    </div>
-  </div>
-</section>
-
-<!-- HOW -->
-<section id="how" class="section">
-  <div class="wrap">
-    <p class="eyebrow">How it works</p>
-    <h2>From CRM export to a full diary in about 10 days.</h2>
-    <ol class="steps">
-      <li>
-        <span class="step-n">1</span>
-        <h3>You send us an export</h3>
-        <p>A CSV from Rex, VaultRE, AgentBox, Box+Dice or any other CRM. We clean it, remove duplicates and existing opt-outs, and split it into old appraisals, past buyers and past vendors.</p>
-      </li>
-      <li>
-        <span class="step-n">2</span>
-        <h3>You approve every message</h3>
-        <p>We write a 3–4 message sequence of SMS and email, sent in your agency's name. Nothing goes out until you've signed off on the wording.</p>
-      </li>
-      <li>
-        <span class="step-n">3</span>
-        <h3>We handle the replies</h3>
-        <p>AI reads and answers replies within minutes, 7 days a week, and qualifies each owner: timing, address, what's prompting the move. Anything sensitive is handed to a person straight away.</p>
-      </li>
-      <li>
-        <span class="step-n">4</span>
-        <h3>Appraisals land in your diary</h3>
-        <p>Confirmed appointments go straight into your agent's calendar with the owner's notes, and the owner gets a reminder. You see every result on a live dashboard.</p>
-      </li>
-    </ol>
-  </div>
-</section>
-
-<!-- CALCULATOR -->
-<section id="calculator" class="section calc-section">
-  <div class="wrap">
-    <p class="eyebrow">Calculator</p>
-    <h2>What's your database worth?</h2>
-    <p class="sub">Enter your contact count and your average commission per listing.</p>
-
-    <div class="calc">
-      <form class="calc-inputs" id="calc-form" onsubmit="return false">
-        <label for="contacts">Contacts in your database
-          <span class="hint">Old appraisals + past buyers + past vendors</span>
-        </label>
+    <div class="calc" id="calculator">
+      <h2>What's your database worth?</h2>
+      <form onsubmit="return false">
+        <label for="contacts">Contacts in your CRM</label>
         <div class="field-row">
           <input type="range" id="contacts-range" min="500" max="20000" step="100" value="3000" aria-label="Contacts slider">
           <input type="number" id="contacts" min="0" max="500000" step="100" value="3000" inputmode="numeric">
         </div>
-
-        <label for="commission">Average commission per listing
-          <span class="hint">Gross commission to your agency</span>
-        </label>
+        <label for="commission">Average commission per listing</label>
         <div class="field-row">
           <input type="range" id="commission-range" min="5000" max="40000" step="500" value="15000" aria-label="Commission slider">
           <div class="money"><span>$</span><input type="number" id="commission" min="0" max="500000" step="500" value="15000" inputmode="numeric"></div>
         </div>
-
-        <p class="assumptions">Assumes <strong>0.8%</strong> of contacts book an appraisal and <strong>1 in 5</strong> appraisals becomes a listing. Our fee is <strong>$400</strong> per booked appraisal. These are estimates, and your pilot will give you real numbers.</p>
       </form>
-
-      <div class="calc-out" aria-live="polite">
-        <div class="out-main">
-          <span class="out-label">Estimated commission from one campaign</span>
-          <span class="out-big" id="o-commission">$72,000</span>
-        </div>
-        <dl class="out-grid">
-          <div><dt>Booked appraisals</dt><dd id="o-appraisals">24</dd></div>
-          <div><dt>New listings</dt><dd id="o-listings">4.8</dd></div>
-          <div><dt>Our fee</dt><dd id="o-fee">$9,600</dd></div>
-          <div><dt>Commission per $1 of fees</dt><dd id="o-multiple">$7.50</dd></div>
-        </dl>
-        <p class="out-note">That works out to about <strong id="o-cpl">$2,000</strong> per new listing.</p>
-        <a href="#apply" class="btn btn-light" id="calc-cta">Run this on my database</a>
+      <div class="calc-result" aria-live="polite">
+        <div class="calc-big"><span>Estimated commission</span><strong id="o-commission">$72,000</strong></div>
+        <table class="calc-table">
+          <tr><td>Booked appraisals</td><td id="o-appraisals">24</td></tr>
+          <tr><td>New listings</td><td id="o-listings">4.8</td></tr>
+          <tr><td>Our fee</td><td id="o-fee">$9,600</td></tr>
+          <tr><td>Cost per new listing</td><td id="o-cpl">$2,000</td></tr>
+        </table>
+        <p class="calc-fine">Based on 0.8% of contacts booking an appraisal and 1 in 5 appraisals listing. It's an estimate; a pilot gives you your real numbers.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- PRICING -->
-<section id="pricing" class="section">
+<section id="how" class="section">
   <div class="wrap">
-    <p class="eyebrow">Pricing</p>
-    <h2>Paid per result. No retainer, no lock-in.</h2>
+    <div class="section-head">
+      <h2>How it works</h2>
+      <p class="sub">Most agencies have thousands of people in the CRM who haven't heard from them in years: appraisals that never listed, buyers who've been in their home five years, past vendors. We get back in touch with them for you.</p>
+    </div>
+    <ol class="steps">
+      <li>
+        <span class="step-n">Step 1</span>
+        <h3>Send us a CRM export</h3>
+        <p>A CSV from Rex, VaultRE, AgentBox, Box+Dice or similar. We clean it up, take out duplicates and anyone who's opted out, and split it into appraisals, buyers and vendors.</p>
+      </li>
+      <li>
+        <span class="step-n">Step 2</span>
+        <h3>Approve the messages</h3>
+        <p>We write 3 or 4 short SMS and emails, sent in your agency's name over about 10 days. Nothing goes out until you've signed off.</p>
+      </li>
+      <li>
+        <span class="step-n">Step 3</span>
+        <h3>Appraisals go in the diary</h3>
+        <p>We reply to everyone who responds, usually within minutes, and book the interested ones straight into your agent's calendar with notes and a reminder.</p>
+      </li>
+    </ol>
+    <p class="need"><strong>What we need from you:</strong> a CSV export, access to your agents' calendars, and sign-off on the messages. Usually about an hour of your time.</p>
+  </div>
+</section>
 
-    <div class="pricing">
-      <div class="price-card featured">
-        <p class="badge">Founding pilot · 3 agencies only</p>
-        <p class="price"><span class="amt">$400</span> per booked appraisal</p>
-        <p class="price-sub">$0 setup. If nothing books, you pay nothing.</p>
-        <ul class="ticks">
-          <li>Database cleaning and segmentation</li>
-          <li>Message sequences written for your agency and approved by you</li>
-          <li>Two-way SMS from a dedicated Australian number, plus email</li>
-          <li>Replies handled 7 days a week, with booking straight into your diary</li>
-          <li>Live results dashboard</li>
-          <li>Quarterly reruns at the same rate</li>
-        </ul>
-        <a href="#apply" class="btn">Apply for a founding pilot</a>
+<section id="pricing" class="section section-alt">
+  <div class="wrap price-wrap">
+    <div class="price-box">
+      <p class="price-tag">Founding agencies (first 3 only)</p>
+      <p class="price"><strong>$400</strong>per booked appraisal</p>
+      <p class="price-sub">No setup fee. Nothing to pay if nothing books.</p>
+      <ul class="ticks">
+        <li>Database clean-up and segmenting</li>
+        <li>Messages written for your agency, approved by you</li>
+        <li>Two-way SMS from an Australian number, plus email</li>
+        <li>Replies handled 7 days a week</li>
+        <li>Bookings straight into your diary</li>
+        <li>Results report for every campaign</li>
+        <li>Rerun every quarter at the same rate</li>
+      </ul>
+      <a href="https://calendly.com/kerbautomation/30min" class="btn js-calendly" target="_blank" rel="noopener">Book a call</a>
+    </div>
+    <dl class="terms-list">
+      <div>
+        <dt>What counts as a booked appraisal</dt>
+        <dd>A confirmed appointment in your agent's diary with a named owner at a property address, which the owner has confirmed by text or email. Enquiries and "maybe later" replies aren't charged.</dd>
       </div>
+      <div>
+        <dt>No-shows</dt>
+        <dd>If the owner doesn't turn up and won't reschedule, let us know within 48 hours and we'll take it off your invoice.</dd>
+      </div>
+      <div>
+        <dt>SMS costs</dt>
+        <dd>Charged at cost, with no mark-up. You get a quote before anything is sent.</dd>
+      </div>
+      <div>
+        <dt>Invoicing</dt>
+        <dd>Weekly, listing each appointment, so you can check it against your diary.</dd>
+      </div>
+    </dl>
+  </div>
+</section>
 
-      <div class="price-notes">
-        <div>
-          <h3>What counts as a booked appraisal?</h3>
-          <p>A confirmed appointment in your agent's diary, with a named owner at a property address, that the owner confirmed in writing. Enquiries, "maybe later" replies and price questions aren't charged.</p>
-        </div>
-        <div>
-          <h3>No-shows</h3>
-          <p>If the owner doesn't turn up and won't reschedule, tell us within 48 hours and we'll credit it on your next invoice.</p>
-        </div>
-        <div>
-          <h3>SMS costs</h3>
-          <p>Passed through at cost with no mark-up. We quote them before launch so there are no surprises.</p>
-        </div>
-        <div>
-          <h3>Invoicing</h3>
-          <p>Weekly, itemised by appointment, so you can check every booking against your diary.</p>
-        </div>
-      </div>
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Spam Act compliant, and your data stays yours</h2>
+    </div>
+    <div class="comply">
+      <div><h3>Existing contacts only</h3><p>We only message people who've dealt with your agency before. No bought lists.</p></div>
+      <div><h3>Clearly from you</h3><p>Every message names your agency and agent.</p></div>
+      <div><h3>Easy opt-out</h3><p>Every message has an opt-out. Opt-outs are actioned straight away and sent back to you.</p></div>
+      <div><h3>No reuse of data</h3><p>Your contacts are only used for your campaigns. Never shared or sold.</p></div>
     </div>
   </div>
 </section>
 
-<!-- COMPLIANCE -->
-<section class="band band-dark">
-  <div class="wrap two-col">
-    <div>
-      <p class="eyebrow">Compliance and your data</p>
-      <h2>Built around the Spam Act from day one.</h2>
-    </div>
-    <ul class="ticks ticks-light">
-      <li><strong>Existing relationships only.</strong> We message people who have dealt with your agency before, never bought lists.</li>
-      <li><strong>Clearly from you.</strong> Every message identifies your agency and how to reach you.</li>
-      <li><strong>Opt-out on every message.</strong> Unsubscribes are honoured immediately and handed back to you to update your CRM.</li>
-      <li><strong>Your data stays yours.</strong> We use it only to run your campaigns. We never sell, share or reuse it for anyone else.</li>
-    </ul>
-  </div>
-</section>
-
-<!-- FAQ -->
-<section id="faq" class="section">
+<section id="faq" class="section section-alt">
   <div class="wrap narrow">
-    <p class="eyebrow">FAQ</p>
-    <h2>Questions agency principals ask.</h2>
-
+    <h2>FAQ</h2>
     <details>
-      <summary>Won't this annoy my database?</summary>
-      <p>The sequence is short (3–4 messages over about 10 days), personal and relevant: an updated appraisal on a property they've already asked you about. Anyone who opts out is removed immediately. You approve the tone before anything goes out.</p>
+      <summary>Will this annoy my database?</summary>
+      <p>It's 3 or 4 short messages over about 10 days, offering an updated appraisal to people who've dealt with you before. You approve the wording, and anyone who opts out is removed straight away.</p>
     </details>
     <details>
       <summary>Which CRMs do you work with?</summary>
-      <p>Anything that exports a CSV: Rex, VaultRE, AgentBox, Box+Dice, Eagle and others. We don't need a login to your CRM, just an export and calendar access for booking.</p>
+      <p>Any CRM that can export a CSV, including Rex, VaultRE, AgentBox, Box+Dice and Eagle. We don't need a login to your CRM.</p>
     </details>
     <details>
-      <summary>Is it a bot calling my clients?</summary>
-      <p>No. There are no calls and no voice agents. It's text and email only. AI drafts and sends replies so owners hear back in minutes, and a person reviews every conversation. The appraisal itself is done by your agent, as always.</p>
+      <summary>Do you call people?</summary>
+      <p>No. It's SMS and email only. Replies are drafted with AI so people hear back quickly, and we check the conversations. Your agent does the appraisal as normal.</p>
     </details>
     <details>
-      <summary>What if the campaign books nothing?</summary>
-      <p>Then you pay nothing apart from the SMS you approved before launch. We only make money when you get appointments, so our incentives match yours.</p>
+      <summary>What if nothing books?</summary>
+      <p>You don't pay anything apart from the SMS costs you approved before launch.</p>
     </details>
     <details>
-      <summary>How much of my time does it take?</summary>
-      <p>About an hour to start: export the CSV, connect the calendar and approve the messages. After that, you and your agents turn up to appraisals.</p>
+      <summary>How long does a campaign take?</summary>
+      <p>About a week to set up, then around 10 days of messages. Most bookings come in during the first week of sending.</p>
     </details>
     <details>
-      <summary>Why only three founding pilots?</summary>
-      <p>We work closely with each pilot agency to tune the messages and prove the numbers. In return, founding agencies keep the $0 setup rate on every future rerun.</p>
+      <summary>Why only three founding agencies?</summary>
+      <p>We're working closely with the first agencies to fine-tune the messages. Founding agencies keep the no-setup-fee rate on every future rerun.</p>
     </details>
   </div>
 </section>
 
-<!-- APPLY -->
-<section id="apply" class="section apply-section">
-  <div class="wrap apply-grid">
+<section id="book" class="section book">
+  <div class="wrap book-grid">
     <div>
-      <p class="eyebrow">Founding pilots</p>
-      <h2>Put your database to work.</h2>
-      <p class="sub">Tell us a little about your agency. We'll reply within one business day with a campaign plan and an SMS cost quote.</p>
-      <p class="contact-line">Prefer email? <a href="mailto:hello@kerbautomation.com">hello@kerbautomation.com</a></p>
+      <h2>Book a 30-minute call</h2>
+      <p class="sub">We'll look at roughly how many contacts you have, what a campaign would cost in SMS, and whether it's worth doing for your agency.</p>
+      <div class="book-contact">
+        <p><span>Email</span><a href="mailto:kerbautomation@gmail.com">kerbautomation@gmail.com</a></p>
+        <p><span>Calendar</span><a href="https://calendly.com/kerbautomation/30min" target="_blank" rel="noopener">calendly.com/kerbautomation/30min</a></p>
+      </div>
     </div>
-
-    <form name="pilot" method="POST" action="/thanks.html" data-netlify="true" netlify-honeypot="company_url" class="apply-form">
-      <input type="hidden" name="form-name" value="pilot">
-      <p class="hp"><label>Leave this empty <input name="company_url" tabindex="-1" autocomplete="off"></label></p>
-      <input type="hidden" name="calc_contacts" id="f-contacts">
-      <input type="hidden" name="calc_commission" id="f-commission">
-      <input type="hidden" name="calc_estimate" id="f-estimate">
-
-      <div class="f2">
-        <label>Your name<input name="name" required autocomplete="name"></label>
-        <label>Agency<input name="agency" required autocomplete="organization"></label>
+    <div>
+      <div class="calendly-box">
+      <div class="calendly-inline-widget" data-url="https://calendly.com/kerbautomation/30min?hide_gdpr_banner=1&amp;primary_color=1f6feb">
+        <noscript><p class="calendly-fallback"><a href="https://calendly.com/kerbautomation/30min">Open the booking calendar</a></p></noscript>
       </div>
-      <div class="f2">
-        <label>Email<input type="email" name="email" required autocomplete="email"></label>
-        <label>Mobile<input type="tel" name="phone" autocomplete="tel"></label>
       </div>
-      <div class="f2">
-        <label>Roughly how many contacts?<input type="number" name="contacts" id="f-contacts-visible" min="0" inputmode="numeric"></label>
-        <label>CRM
-          <select name="crm">
-            <option value="">Choose one</option>
-            <option>Rex</option><option>VaultRE</option><option>AgentBox</option>
-            <option>Box+Dice</option><option>Eagle</option><option>Other</option>
-          </select>
-        </label>
-      </div>
-      <label>Anything we should know? <span class="opt">(optional)</span><textarea name="note" rows="3"></textarea></label>
-      <button type="submit" class="btn btn-block">Apply for a founding pilot</button>
-      <p class="form-fine">We'll use these details only to reply to you. See our <a href="/privacy.html">privacy policy</a>.</p>
-    </form>
+      <p class="calendly-alt">Calendar not showing? <a href="https://calendly.com/kerbautomation/30min" target="_blank" rel="noopener">Open it in a new tab</a>.</p>
+    </div>
   </div>
 </section>
 
@@ -308,14 +221,16 @@
       <p class="foot-small">Database reactivation for Australian real estate agencies.</p>
     </div>
     <div class="foot-links">
-      <a href="mailto:hello@kerbautomation.com">hello@kerbautomation.com</a>
-      <a href="/privacy.html">Privacy policy</a>
+      <a href="mailto:kerbautomation@gmail.com">kerbautomation@gmail.com</a>
+      <a href="https://calendly.com/kerbautomation/30min" target="_blank" rel="noopener">Book a call</a>
+      <a href="/privacy.html">Privacy</a>
       <a href="/terms.html">Terms</a>
     </div>
     <p class="foot-small foot-legal">© <span id="yr">2026</span> Kerb Automation · ABN [ADD ABN]</p>
   </div>
 </footer>
 
+<script src="https://assets.calendly.com/assets/external/widget.js" async></script>
 <script src="assets/calculator.js"></script>
 </body>
 </html>

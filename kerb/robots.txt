@@ -1,3 +1,2 @@
 User-agent: *
 Disallow: /pitch.html
-Disallow: /thanks.html

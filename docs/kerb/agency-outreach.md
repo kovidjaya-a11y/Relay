@@ -76,7 +76,7 @@ every email.
 > Worth a 15-minute chat this week?
 >
 > {Your name}, Kerb Automation
-> hello@kerbautomation.com · kerbautomation.com
+> kerbautomation@gmail.com · kerbautomation.com
 > Not relevant? Reply "no" and I won't email again.
 
 ### Follow-up B
@@ -151,6 +151,6 @@ If they're asked "what's it about?":
 - Agency warrants the data qualifies under the Spam Act (existing relationship)
 - Agency approves the templates in writing
 - Permission to use anonymised results as a case study, plus a testimonial if
-  the pilot hits the targets. **This replaces the illustrative "Harbour & Co"
-  example on the site.**
+  the pilot hits the targets. **Add it to the site as its first real
+  result.**
 - Either party can stop at any time
