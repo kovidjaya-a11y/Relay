@@ -234,3 +234,49 @@ details p{color:var(--ink-2);margin:.7rem 0 0;max-width:65ch}
   .demo-arrow{transform:rotate(90deg);justify-self:center}
   .demo-box{height:auto}
 }
+
+/* intake schedule (offer cards) */
+.offer-plan{list-style:none;padding:0;margin:0 0 1.1rem;border-top:1px solid var(--line)}
+.offer-plan li{display:grid;grid-template-columns:5.6rem 1fr;gap:.8rem;padding:.6rem 0;border-bottom:1px solid var(--line);font-size:.88rem;color:var(--ink-2);line-height:1.4}
+.offer-plan li>span{font-size:.78rem;font-weight:600;color:var(--muted);padding-top:.1rem}
+.offer-plan strong{display:block;color:var(--ink);font-size:.95rem}
+
+/* results: case stories + testimonials */
+.cases{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.case-card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:1.5rem;display:flex;flex-direction:column}
+.case-tag{font-size:.8rem;font-weight:600;color:var(--blue);margin-bottom:.5rem}
+.case-card h3{margin-bottom:.6rem}
+.case-card p{color:var(--ink-2);font-size:.95rem}
+.case-stats{list-style:none;padding:.9rem 0 0;margin:auto 0 0;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:.4rem 1rem;font-size:.85rem;color:var(--muted)}
+.case-stats strong{color:var(--ink)}
+.quotes{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px}
+.quote{margin:0;background:var(--bg-alt);border-radius:12px;padding:1.5rem 1.6rem}
+.quote blockquote{margin:0 0 1rem;font-size:1.08rem;line-height:1.5;color:var(--ink)}
+.quote figcaption{font-size:.88rem;color:var(--muted)}
+.quote figcaption strong{display:block;color:var(--ink)}
+
+/* enquiry form with chips */
+.enquiry fieldset{border:0;padding:0;margin:0 0 1.3rem}
+.enquiry legend{font-weight:600;margin-bottom:.55rem;padding:0}
+.chips{display:flex;flex-wrap:wrap;gap:.5rem}
+.chips label{position:relative;cursor:pointer}
+.chips input{position:absolute;opacity:0;width:1px;height:1px}
+.chips span{display:inline-block;padding:.5rem .95rem;border:1.5px solid var(--line);border-radius:999px;font-size:.92rem;color:var(--ink-2);background:#fff;transition:border-color .15s,background .15s}
+.chips label:hover span{border-color:var(--muted)}
+.chips input:checked+span{background:var(--blue-soft);border-color:var(--blue);color:var(--navy);font-weight:600}
+.chips input:focus-visible+span{outline:3px solid var(--blue);outline-offset:2px}
+.enquiry .field{display:block;font-weight:600;margin-bottom:1rem;font-size:.95rem}
+.enquiry .field .opt{font-weight:400;color:var(--muted)}
+.enquiry input[type=text],.enquiry input[type=email],.enquiry input[type=tel],.enquiry textarea{display:block;width:100%;margin-top:.35rem;padding:.7rem .85rem;border:1.5px solid var(--line);border-radius:8px;font:inherit;font-weight:400;font-size:1rem;color:var(--ink);background:#fff}
+.enquiry input:focus,.enquiry textarea:focus{outline:none;border-color:var(--blue)}
+.field-pair{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}
+.enquiry .btn{margin:.4rem 0 .8rem}
+.hp{position:absolute;left:-9999px}
+
+@media (max-width:960px){
+  .cases{grid-template-columns:1fr}
+  .quotes{grid-template-columns:1fr}
+}
+@media (max-width:640px){
+  .field-pair{grid-template-columns:1fr}
+}
