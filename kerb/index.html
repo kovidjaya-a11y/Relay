@@ -20,7 +20,7 @@
 
 <a class="skip" href="#main">Skip to content</a>
 
-<a class="offer-bar" href="/ai-setup.html#offer">This week: 5 AI setup spots for small businesses, starting Monday 5 October. <span>Reserve one →</span></a>
+<a class="offer-bar" href="/ai-setup.html#offer">This week: 5 AI setup spots for small businesses, starting Monday 5 October. Spots are being claimed. <span>Reserve yours →</span></a>
 
 <header class="nav" id="top">
   <div class="wrap nav-inner">
@@ -33,7 +33,7 @@
       <a href="#realestate">Real estate</a>
       <a href="/ai-search.html">AI search</a>
       <a href="/ai-setup.html">AI setup</a>
-      <a href="#book">Contact</a>
+      <a href="#enquire">Contact</a>
     </nav>
     <a href="https://calendly.com/kerbautomation/30min" class="btn btn-sm js-calendly" target="_blank" rel="noopener">Book a call</a>
   </div>
@@ -58,12 +58,14 @@
     </div>
 
     <div class="calc side-card offer-card">
-      <p class="offer-flag">This week only</p>
+      <p class="offer-flag">Filling now</p>
       <h2>5 AI setup spots, starting Monday 5 October</h2>
+      <ol class="offer-plan" aria-label="How this week's intake runs">
+        <li><span>This week</span><div><strong>20-minute call</strong>We pick your 3 jobs. $1,000 deposit locks your spot.</div></li>
+        <li><span>Mon 5 Oct</span><div><strong>Setup starts</strong>AI connected to your email and files.</div></li>
+        <li><span>About a week</span><div><strong>Your team is using it</strong>Training, cheat sheets and 60 days of support.</div></li>
+      </ol>
       <ul class="ticks">
-        <li>AI connected to your email and files</li>
-        <li>Set up for your 3 most time-consuming jobs</li>
-        <li>Staff training and cheat sheets</li>
         <li><strong>Bonus:</strong> free AI search check</li>
         <li><strong>Bonus:</strong> 60 days of support (normally 30)</li>
       </ul>
@@ -102,6 +104,68 @@
     </div>
   </div>
 </section>
+
+
+<!--
+  RESULTS SECTION (case stories + testimonials) is built but switched off.
+  It's inside a <template>, so browsers and search engines don't show it.
+  To switch it on: replace every [bracketed] placeholder with REAL client details
+  and quotes the client has approved, delete any unused cards, then change
+  <template id="results-template"> to nothing and </template> to nothing.
+-->
+<template id="results-template">
+<section id="results" class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Results</p>
+      <h2>Setups we've done.</h2>
+      <p class="sub">Real businesses, what we set up, and what changed.</p>
+    </div>
+    <div class="cases">
+      <article class="case-card">
+        <p class="case-tag">[Industry] · [Suburb or city]</p>
+        <h3>[One-line headline, e.g. "Quotes out the same day, not three days later"]</h3>
+        <p>[Two sentences: what was eating their week, and what we set up.]</p>
+        <ul class="case-stats">
+          <li><strong>[N] staff</strong></li>
+          <li><strong>[N] days</strong> to set up</li>
+          <li><strong>~[N] hrs/week</strong> saved</li>
+        </ul>
+      </article>
+      <article class="case-card">
+        <p class="case-tag">[Industry] · [Suburb or city]</p>
+        <h3>[Headline]</h3>
+        <p>[Two sentences.]</p>
+        <ul class="case-stats">
+          <li><strong>[N] staff</strong></li>
+          <li><strong>[N] days</strong> to set up</li>
+          <li><strong>~[N] hrs/week</strong> saved</li>
+        </ul>
+      </article>
+      <article class="case-card">
+        <p class="case-tag">[Industry] · [Suburb or city]</p>
+        <h3>[Headline]</h3>
+        <p>[Two sentences.]</p>
+        <ul class="case-stats">
+          <li><strong>[N] staff</strong></li>
+          <li><strong>[N] days</strong> to set up</li>
+          <li><strong>~[N] hrs/week</strong> saved</li>
+        </ul>
+      </article>
+    </div>
+    <div class="quotes">
+      <figure class="quote">
+        <blockquote>"[Client's own words, approved by them.]"</blockquote>
+        <figcaption><strong>[First name Last name]</strong>[Role], [Business name]</figcaption>
+      </figure>
+      <figure class="quote">
+        <blockquote>"[Client's own words, approved by them.]"</blockquote>
+        <figcaption><strong>[First name Last name]</strong>[Role], [Business name]</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+</template>
 
 <section id="realestate" class="section">
   <div class="wrap hero-grid">
@@ -249,6 +313,75 @@
       <summary>What's the founding rate?</summary>
       <p>Agencies that start before 30 November pay no setup fee, and keep that rate on every quarterly rerun.</p>
     </details>
+  </div>
+</section>
+
+<section id="enquire" class="section">
+  <div class="wrap narrow">
+    <div class="section-head">
+      <h2>Tell us about your business</h2>
+      <p class="sub">Not ready for a call? Tap a few options and we'll reply personally within one business day with what we'd set up first.</p>
+    </div>
+    <form class="enquiry" name="enquiry" method="POST" action="/thanks.html" data-netlify="true" netlify-honeypot="company-website">
+      <input type="hidden" name="form-name" value="enquiry">
+      <p class="hp" aria-hidden="true"><label>Leave this empty <input name="company-website" tabindex="-1" autocomplete="off"></label></p>
+
+      <fieldset>
+        <legend>What are you interested in?</legend>
+        <div class="chips">
+          <label><input type="radio" name="interest" value="AI setup for my team" required><span>AI setup for my team</span></label>
+          <label><input type="radio" name="interest" value="Getting recommended by AI"><span>Getting recommended by AI</span></label>
+          <label><input type="radio" name="interest" value="Database reactivation"><span>Real estate database</span></label>
+          <label><input type="radio" name="interest" value="Not sure yet"><span>Not sure yet</span></label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Industry</legend>
+        <div class="chips">
+          <label><input type="radio" name="industry" value="Real estate" required><span>Real estate</span></label>
+          <label><input type="radio" name="industry" value="Trades"><span>Trades</span></label>
+          <label><input type="radio" name="industry" value="Professional services"><span>Accounting, legal, finance</span></label>
+          <label><input type="radio" name="industry" value="Health and allied health"><span>Health</span></label>
+          <label><input type="radio" name="industry" value="Retail or hospitality"><span>Retail or hospitality</span></label>
+          <label><input type="radio" name="industry" value="Other"><span>Other</span></label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Team size</legend>
+        <div class="chips">
+          <label><input type="radio" name="team-size" value="Just me" required><span>Just me</span></label>
+          <label><input type="radio" name="team-size" value="2-5"><span>2–5</span></label>
+          <label><input type="radio" name="team-size" value="6-20"><span>6–20</span></label>
+          <label><input type="radio" name="team-size" value="20+"><span>20+</span></label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Budget</legend>
+        <div class="chips">
+          <label><input type="radio" name="budget" value="Under $2,000" required><span>Under $2,000</span></label>
+          <label><input type="radio" name="budget" value="$2,000-$5,000"><span>$2,000–$5,000</span></label>
+          <label><input type="radio" name="budget" value="$5,000+"><span>$5,000+</span></label>
+          <label><input type="radio" name="budget" value="Not sure"><span>Not sure</span></label>
+        </div>
+      </fieldset>
+
+      <label class="field">What eats the most time in your week?
+        <textarea name="time-waster" rows="3" placeholder="e.g. writing quotes, chasing invoices, answering the same emails"></textarea>
+      </label>
+      <div class="field-pair">
+        <label class="field">Name<input type="text" name="name" autocomplete="name" required></label>
+        <label class="field">Business<input type="text" name="business" autocomplete="organization"></label>
+      </div>
+      <div class="field-pair">
+        <label class="field">Email<input type="email" name="email" autocomplete="email" required></label>
+        <label class="field">Phone <span class="opt">(optional)</span><input type="tel" name="phone" autocomplete="tel"></label>
+      </div>
+      <button type="submit" class="btn">Send</button>
+      <p class="calc-fine">We only use your details to reply to you. See our <a href="/privacy.html">privacy policy</a>.</p>
+    </form>
   </div>
 </section>
 
