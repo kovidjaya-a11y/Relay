@@ -183,3 +183,28 @@ details p{color:var(--ink-2);margin:.7rem 0 0;max-width:65ch}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 .calendly-alt{margin:.8rem 0 0;font-size:.9rem;color:#9fb0c8}
 .calendly-alt a{color:#fff}
+
+/* services + extra pages */
+.services{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.service-card{display:flex;flex-direction:column;background:#fff;border:1px solid var(--line);border-radius:12px;padding:1.6rem;box-shadow:var(--shadow);text-decoration:none;color:inherit;transition:border-color .15s,transform .15s}
+.service-card:hover{border-color:var(--blue);transform:translateY(-2px)}
+.service-card .price-tag{margin-bottom:.4rem}
+.service-card h3{font-size:1.2rem;margin-bottom:.5rem}
+.service-card p{color:var(--ink-2);font-size:.97rem;margin:0 0 1.2rem}
+.service-card .more{margin-top:auto;color:var(--blue);font-weight:600}
+.side-card h2{margin-bottom:.6rem}
+.side-intro{color:var(--ink-2);font-size:.93rem;margin-bottom:.6rem}
+.quote-list{list-style:none;padding:0;margin:0 0 1rem}
+.quote-list li{background:var(--bg-alt);border-radius:8px;padding:.55rem .8rem;margin-bottom:.45rem;font-size:.92rem;color:var(--ink-2)}
+.calc-table td:last-child{padding-left:1rem}
+.tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;align-items:stretch}
+.tiers .price-box{display:flex;flex-direction:column}
+.tiers .price-box .btn{margin-top:auto;align-self:flex-start}
+.price-box.featured{border:2px solid var(--blue)}
+.tiers-note{margin-top:1.2rem}
+.steps-4{grid-template-columns:repeat(4,1fr)}
+.nav-links a[aria-current="page"]{color:#fff;font-weight:600}
+@media (max-width:960px){
+  .services,.tiers{grid-template-columns:1fr}
+  .steps-4{grid-template-columns:1fr}
+}
