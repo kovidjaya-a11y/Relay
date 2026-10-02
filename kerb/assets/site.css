@@ -208,3 +208,29 @@ details p{color:var(--ink-2);margin:.7rem 0 0;max-width:65ch}
   .services,.tiers{grid-template-columns:1fr}
   .steps-4{grid-template-columns:1fr}
 }
+
+/* weekend offer */
+.offer-bar{display:block;background:var(--blue);color:#fff;text-align:center;text-decoration:none;font-size:.92rem;font-weight:500;padding:.55rem 16px}
+.offer-bar span{font-weight:700;white-space:nowrap}
+.offer-bar:hover{background:var(--blue-h)}
+.offer-flag{display:inline-block;background:#fff4d6;color:#8a5a00;font-size:.8rem;font-weight:700;padding:.25rem .65rem;border-radius:999px;margin:0 0 .7rem}
+.offer-card h2{font-size:1.3rem;margin-bottom:.8rem}
+.offer-card .ticks{margin-bottom:1rem}
+.offer-card .btn{margin-top:1rem}
+.offer-panel{display:grid;grid-template-columns:1.2fr .8fr;gap:40px;align-items:center;border:2px solid var(--blue);border-radius:16px;padding:2.2rem;background:#fff;box-shadow:var(--shadow)}
+.offer-panel .ticks{margin:1.2rem 0 0}
+.offer-box{background:var(--bg-alt);border-radius:12px;padding:1.6rem}
+.offer-box .calc-fine{margin-top:.8rem}
+.section-tight{padding-top:24px}
+#realestate .sub{margin-bottom:1.6rem}
+.demo{display:grid;grid-template-columns:1fr auto 1fr;gap:20px;align-items:stretch}
+.demo-label{font-size:.85rem;font-weight:600;color:var(--muted);margin:0 0 .5rem}
+.demo-box{background:#fff;border:1px solid var(--line);border-radius:12px;padding:1.2rem 1.3rem;font-size:.95rem;color:var(--ink-2);height:calc(100% - 1.9rem)}
+.demo-out{border-color:var(--blue);box-shadow:var(--shadow)}
+.demo-arrow{align-self:center;font-size:1.8rem;color:var(--blue)}
+@media (max-width:960px){
+  .offer-panel{grid-template-columns:1fr;padding:1.4rem}
+  .demo{grid-template-columns:1fr}
+  .demo-arrow{transform:rotate(90deg);justify-self:center}
+  .demo-box{height:auto}
+}
